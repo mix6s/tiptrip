@@ -7,15 +7,17 @@ class CreateUsersTable extends AbstractMigration
    public function up()
    {
 	   $users = $this->table('users');
-	   $users->addColumn('username', 'string', ['limit' => 100])
-		   ->addColumn('password', 'string', ['limit' => 40])
-		   ->addColumn('password_salt', 'string', ['limit' => 40])
-		   ->addColumn('email', 'string', ['limit' => 100])
-		   ->addColumn('phone', 'string', ['limit' => 10])
-		   ->addColumn('nickname', 'string', ['limit' => 20])
+	   $users
+		   ->addColumn('password', 'string', ['limit' => 40,])
+		   ->addColumn('password_salt', 'string', ['limit' => 40, 'null' => true])
+		   ->addColumn('email', 'string', ['limit' => 100, 'null' => true])
+		   ->addColumn('phone', 'string', ['limit' => 10, 'null' => true])
+		   ->addColumn('nickname', 'string', ['limit' => 20, 'null' => true])
 		   ->addColumn('created_at', 'datetime')
 		   ->addColumn('updated_at', 'datetime')
-		   ->addIndex(['username', 'email', 'phone'], ['unique' => true])
+		   ->addColumn('deleted', 'boolean', ['null' => true])
+		   ->addIndex(['email'], ['unique' => true])
+		   ->addIndex(['phone'], ['unique' => true])
 		   ->save();
    }
 

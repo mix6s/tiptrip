@@ -1,6 +1,8 @@
 <?php
 
+use App\Main\Components\SecurityManager;
 use Phalcon\Mvc\Dispatcher;
+use Phalcon\Mvc\Router;
 use Phalcon\Mvc\View;
 use Phalcon\Mvc\Url;
 use Phalcon\Config;
@@ -10,10 +12,44 @@ use Phalcon\Logger\Formatter\Line as Formatter;
 
 /** @var Config $config */
 
+
+$di->set('securityManager', function () {
+	return new SecurityManager();
+}, true);
+
 $di->set(
 	'dispatcher',
-	function () {
+	function () use ($di) {
+		$eventsManager = $di->getShared('eventsManager');
+		$eventsManager->attach(
+			'dispatch:beforeException',
+			function($event, $dispatcher, $exception) {
+				switch ($exception->getCode()) {
+					case Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
+					case Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
+						$dispatcher->forward(
+							[
+								'controller' => 'error',
+								'action' => 'notFound',
+							]
+						);
+						return false;
+						break;
+					/*default:
+						$dispatcher->forward(
+							[
+								'controller' => 'error',
+								'action' => 'uncaughtException',
+								'exception' => $exception,
+							]
+						);
+						return false;
+						break;*/
+				}
+			}
+		);
 		$dispatcher = new Dispatcher();
+		$dispatcher->setEventsManager($eventsManager);
 		$dispatcher->setDefaultNamespace('App\Main\Controllers');
 		return $dispatcher;
 	}
@@ -32,9 +68,20 @@ $di->set('db', function () use ($config) {
 });
 
 $di->set(
+	'router',
+	function () use ($config){
+		$router = new Router();
+		$router->add("/login", "User::login");
+		$router->add("/registration", "User::registration");
+		return $router;
+	}
+);
+
+$di->set(
 	'view',
 	function () use ($config){
 		$view = new View();
+		$view->registerEngines([".html.php" => 'Phalcon\Mvc\View\Engine\Php']);
 		$view->setViewsDir($config->get('application.main')->viewsDir);
 		return $view;
 	}

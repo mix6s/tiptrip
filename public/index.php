@@ -14,17 +14,13 @@ if (isset($_SERVER['SERVER_DEV_TYPE'])) {
 	}
 }
 
-try {
-	define('APP_PATH', realpath('../app') . '/');
-	$config = new Config(require(APP_PATH . 'config/config.php'));
-	$config->merge(new Config(require(APP_PATH . 'config/' . $env . '.php')));
-	$config->merge(new Config(['env' => $env]));
-	require APP_PATH . 'config/loader.php';
-	$di = new DI();
-	$di->set('config', $config);
-	require APP_PATH . 'config/services.php';
-	$application = new Application($di);
-	echo $application->handle()->getContent();
-} catch (\Exception $e) {
-	echo "Exception: ", $e->getMessage();
-}
+define('APP_PATH', realpath('../app') . '/');
+$config = new Config(require(APP_PATH . 'config/config.php'));
+$config->merge(new Config(require(APP_PATH . 'config/' . $env . '.php')));
+$config->merge(new Config(['env' => $env]));
+require APP_PATH . 'config/loader.php';
+$di = new DI();
+$di->set('config', $config);
+require APP_PATH . 'config/services.php';
+$application = new Application($di);
+echo $application->handle()->getContent();

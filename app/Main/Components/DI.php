@@ -8,6 +8,7 @@ use Phalcon\Di\FactoryDefault;
  * App\Main\Components\DI
  *
  * @property \Phalcon\Logger\AdapterInterface $logger;
+ * @property SecurityManager $securityManager
  */
 class DI extends FactoryDefault
 {
