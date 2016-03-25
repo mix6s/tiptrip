@@ -1,6 +1,8 @@
 <?php
 
+use App\Main\Components\Acl;
 use App\Main\Components\SecurityManager;
+use Phalcon\Flash\Session AS Flash;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Mvc\Router;
 use Phalcon\Mvc\View;
@@ -9,13 +11,17 @@ use Phalcon\Config;
 use Phalcon\Db\Adapter\Pdo\Postgresql as DbAdapter;
 use Phalcon\Logger\Adapter\File as Logger;
 use Phalcon\Logger\Formatter\Line as Formatter;
+use Phalcon\Session\Adapter\Files as Session;
 
 /** @var Config $config */
 
-
-$di->set('securityManager', function () {
+$di->setShared('securityManager', function () {
 	return new SecurityManager();
-}, true);
+});
+
+$di->setShared('acl', function () {
+	return new Acl();
+});
 
 $di->set(
 	'dispatcher',
@@ -35,7 +41,7 @@ $di->set(
 						);
 						return false;
 						break;
-					/*default:
+				/*	default:
 						$dispatcher->forward(
 							[
 								'controller' => 'error',
@@ -67,12 +73,33 @@ $di->set('db', function () use ($config) {
 	);
 });
 
+$di->set('flash', function () {
+	$flash = new Flash(
+		[
+			'error'   => 'alert alert-danger',
+			'success' => 'alert alert-success',
+			'notice'  => 'alert alert-info',
+			'warning' => 'alert alert-warning'
+		]
+	);
+
+	return $flash;
+});
+
+$di->setShared('session', function () {
+	$session = new Session();
+	$session->start();
+	return $session;
+});
+
 $di->set(
 	'router',
 	function () use ($config){
 		$router = new Router();
 		$router->add("/login", "User::login");
 		$router->add("/registration", "User::registration");
+		$router->add("/logout", "User::logout");
+		$router->add("/profile", "User::profile");
 		return $router;
 	}
 );
@@ -99,7 +126,6 @@ $di->set(
 $di->set('logger', function () use ($config) {
 	$filename = trim($config->get('logger')->filename, '\\/');
 	$path     = rtrim($config->get('logger')->path, '\\/') . DIRECTORY_SEPARATOR;
-
 	$formatter = new Formatter('%date% main.%type%: %message%', '[Y-m-d H:i:s]');
 	$logger    = new Logger($path . $filename);
 	$logger->setFormatter($formatter);

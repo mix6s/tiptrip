@@ -8,8 +8,7 @@ class CreateUsersTable extends AbstractMigration
    {
 	   $users = $this->table('users');
 	   $users
-		   ->addColumn('password', 'string', ['limit' => 40,])
-		   ->addColumn('password_salt', 'string', ['limit' => 40, 'null' => true])
+		   ->addColumn('password', 'string', ['limit' => 100,])
 		   ->addColumn('email', 'string', ['limit' => 100, 'null' => true])
 		   ->addColumn('phone', 'string', ['limit' => 10, 'null' => true])
 		   ->addColumn('nickname', 'string', ['limit' => 20, 'null' => true])

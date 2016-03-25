@@ -2,7 +2,7 @@
 
 namespace App\Main\Models;
 
-use Phalcon\Mvc\Model;
+use App\Main\Components\Model;
 use Phalcon\Mvc\Model\Behavior\Timestampable;
 use Phalcon\Mvc\Model\Validator;
 
@@ -10,8 +10,25 @@ class Users extends Model
 {
 	protected $id;
 	protected $email;
+	protected $password;
+	protected $nickname;
 	protected $updated_at;
 	protected $created_at;
+
+	public function beforeCreate()
+	{
+		$this->password = $this->getDI()->security->hash($this->password);
+		$this->nickname = $this->getRandomNickname();
+	}
+
+	public function getRandomNickname()
+	{
+		$nicknames = [
+			'Веселый турист',
+			'Мертвый турист'
+		];
+		return $nicknames[rand(0, count($nicknames))];
+	}
 
 	public function initialize()
 	{
@@ -53,6 +70,15 @@ class Users extends Model
 		);
 
 		$this->validate(
+			new Validator\PresenceOf(
+				[
+					"field" => "email",
+					"message" => "Поле не может быть пустым"
+				]
+			)
+		);
+
+		$this->validate(
 			new Validator\Regex(
 				[
 					"field" => "email",
@@ -62,11 +88,71 @@ class Users extends Model
 			)
 		);
 
+		$this->validate(
+			new Validator\PresenceOf(
+				[
+					"field" => "password",
+					"message" => "Поле не может быть пустым"
+				]
+			)
+		);
+
+		$this->validate(
+			new Validator\StringLength(
+				[
+					'field' => 'password',
+					'min'            => 6,
+					'max'            => 40,
+					'messageMinimum' => 'Минимальная длина пароля 6 символов',
+					'messageMaximum' => 'Минимальная длина пароля 6 символов'
+				]
+			)
+		);
+
+		$this->validate(
+			new Validator\Regex(
+				[
+					'field' => 'password',
+					'pattern' => '/.*\d.*/',
+					'message' => 'Поле должно содержать минимум 1 цифру'
+				]
+			)
+		);
+
+		$this->validate(
+			new Validator\Regex(
+				[
+					'field' => 'password',
+					'pattern' => '/^[@_\.\,\-1234567890qwertyuiopasdfghjklzxcvbnm]+$/i',
+					'message' => 'Можно использовать только буквы латинского алфавита (a–z), цифры и знаки пунктуации'
+				]
+			)
+		);
+
 		return $this->validationHasFailed() != true;
 	}
 
-	public function setLogin($login)
+	/**
+	 * @return string
+	 */
+	public function getPassword()
 	{
-		$this->email = $login;
+		return $this->password;
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getId()
+	{
+		return $this->id;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getNickname()
+	{
+		return $this->nickname;
 	}
 }

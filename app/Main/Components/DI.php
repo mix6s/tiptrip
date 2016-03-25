@@ -9,6 +9,9 @@ use Phalcon\Di\FactoryDefault;
  *
  * @property \Phalcon\Logger\AdapterInterface $logger;
  * @property SecurityManager $securityManager
+ * @property Acl $acl
+ * @property \Phalcon\Security $security
+ * @property \Phalcon\Session\Adapter\Files|\Phalcon\Session\Adapter|\Phalcon\Session\AdapterInterface $session
  */
 class DI extends FactoryDefault
 {

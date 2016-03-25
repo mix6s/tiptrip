@@ -8,7 +8,7 @@
 
 		<form class="form-horizontal" method="post">
 			<div class="form-group">
-				<label for="login" class="col-sm-2 control-label">Email Or Phone</label>
+				<label for="login" class="col-sm-2 control-label">Email</label>
 				<div class="col-sm-10">
 					<?= $form->render("email"); ?>
 					<?php foreach ($form->getMessagesFor("email") as $message) : ?>
