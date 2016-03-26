@@ -27,7 +27,6 @@ class Users extends Model
 
 	public function beforeCreate()
 	{
-		$this->password = $this->getDI()->security->hash($this->password);
 		$this->nickname = $this->getRandomNickname();
 	}
 
@@ -122,38 +121,6 @@ class Users extends Model
 			)
 		);
 
-		$this->validate(
-			new Validator\StringLength(
-				[
-					'field' => 'password',
-					'min'            => 6,
-					'max'            => 40,
-					'messageMinimum' => 'Минимальная длина пароля 6 символов',
-					'messageMaximum' => 'Минимальная длина пароля 6 символов'
-				]
-			)
-		);
-
-		$this->validate(
-			new Validator\Regex(
-				[
-					'field' => 'password',
-					'pattern' => '/.*\d.*/',
-					'message' => 'Поле должно содержать минимум 1 цифру'
-				]
-			)
-		);
-
-		$this->validate(
-			new Validator\Regex(
-				[
-					'field' => 'password',
-					'pattern' => '/^[@_\.\,\-1234567890qwertyuiopasdfghjklzxcvbnm]+$/i',
-					'message' => 'Можно использовать только буквы латинского алфавита (a–z), цифры и знаки пунктуации'
-				]
-			)
-		);
-
 		return $this->validationHasFailed() != true;
 	}
 
@@ -166,12 +133,13 @@ class Users extends Model
 	}
 
 	/**
-	 * @return string
+	 * @param string $password
 	 */
-	public function setPassword($value)
+	public function setPassword($password)
 	{
-		$this->password = $value;
+		$this->password = $this->getDI()->security->hash($password);
 	}
+
 
 	/**
 	 * @return int

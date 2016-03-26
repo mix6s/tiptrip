@@ -14,7 +14,7 @@ class CreateUsersTable extends AbstractMigration
 		   ->addColumn('nickname', 'string', ['limit' => 20, 'null' => true])
 		   ->addColumn('created_at', 'datetime')
 		   ->addColumn('updated_at', 'datetime')
-		   ->addColumn('deleted', 'boolean', ['null' => true])
+		   ->addColumn('deleted', 'integer', ['null' => true, 'default' => 0])
 		   ->addIndex(['email'], ['unique' => true])
 		   ->addIndex(['phone'], ['unique' => true])
 		   ->save();

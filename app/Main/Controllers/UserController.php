@@ -4,6 +4,7 @@ namespace App\Main\Controllers;
 
 use App\Main\Components\Controller;
 use App\Main\Forms\LoginForm;
+use App\Main\Forms\PasswordRestoreForm;
 use App\Main\Forms\RegistrationForm;
 use Phalcon\Validation\Exception;
 
@@ -49,6 +50,24 @@ class UserController extends Controller
 	{
 		$this->getDI()->securityManager->unauthorizeCurrentUser();
 		return $this->response->redirect('/');
+	}
+
+	public function passwordRestoreAction()
+	{
+		$form = new PasswordRestoreForm();
+		if ($this->request->isPost()) {
+			$password = $this->getDI()->securityManager->restorePassword($form, $this->request->getPost());
+			if ($password) {
+				$this->flash->success('Новый пароль ' . $password);
+			} else {
+				$this->flash->warning('Ошибка востановления пароля');
+			}
+		}
+		$this->view->setVars(
+			[
+				'form' => $form,
+			]
+		);
 	}
 
 	public function profileAction()

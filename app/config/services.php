@@ -100,6 +100,7 @@ $di->set(
 		$router->add("/registration", "User::registration");
 		$router->add("/logout", "User::logout");
 		$router->add("/profile", "User::profile");
+		$router->add("/forgot", "User::passwordRestore");
 		return $router;
 	}
 );

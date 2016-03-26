@@ -3,10 +3,12 @@
 namespace App\Main\Components;
 
 use App\Main\Forms\LoginForm;
+use App\Main\Forms\PasswordRestoreForm;
 use App\Main\Forms\RegistrationForm;
 use App\Main\Models\Users;
 use Phalcon\Mvc\Model\MessageInterface;
 use Phalcon\Mvc\User\Component;
+use Phalcon\Security\Random;
 use Phalcon\Validation\Message;
 
 /**
@@ -40,6 +42,66 @@ class SecurityManager extends Component
 			return null;
 		}
 		return $user;
+	}
+
+	/**
+	 * @param int $minLen
+	 * @return string
+	 */
+	private function generatePassword($minLen = 7)
+	{
+		$rules = [
+			'alphaLower' => ['charlist' => 'qwertyuiopasdfghjklzxcvbnm', 'min' => 1],
+			'alphaUpper' => ['charlist' => 'QWERTYUIOPASDFGHJKLZXCVBNM', 'min' => 1],
+			'numeric' => ['charlist' => '1234567890', 'min' => 1]
+		];
+		$charlistKeys = array_keys($rules);
+		$password = [];
+		foreach ($rules as $key => $rule) {
+			if (isset($rule['min'])) {
+				for ($i = 0; $i < $rule['min']; $i++) {
+					$charlist = $rules[$key]['charlist'];
+					$password[] = substr($charlist, rand(0, strlen($charlist) - 1), 1);
+				}
+			}
+		}
+		for ($i = count($password) - 1; $i < $minLen; $i++) {
+			$charlistKey = $charlistKeys[rand(0, count($charlistKeys) - 1)];
+			$charlist = $rules[$charlistKey]['charlist'];
+			$password[] = substr($charlist, rand(0, strlen($charlist) - 1), 1);
+		}
+		shuffle($password);
+		return implode('', $password);
+	}
+
+	/**
+	 * @param PasswordRestoreForm $form
+	 * @param array $data
+	 * @return null
+	 */
+	public function restorePassword(PasswordRestoreForm $form, array $data)
+	{
+		$credentials = new \ArrayObject(
+			[
+				'email' => '',
+			], \ArrayObject::ARRAY_AS_PROPS
+		);
+		$form->bind($data, $credentials);
+		if (!$form->isValid()) {
+			return null;
+		}
+		/** @var Users $user */
+		$user = Users::findFirstByEmail($credentials->email);
+		if (!$user) {
+			$form->appendMessageFor('email', new Message('Пользователь не найден', 'email'));
+			return null;
+		}
+		$password = $this->generatePassword();
+		$user->setPassword($password);
+		if (!$user->save()) {
+			return null;
+		}
+		return $password;
 	}
 
 	public function authentificate(LoginForm $form, array $data)

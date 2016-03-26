@@ -17,6 +17,7 @@ $di = $this->getDi();
 			<?php else: ?>
 				<a class="btn btn-default navbar-btn" href="/login">Sign in</a>
 				<a class="btn btn-default navbar-btn" href="/registration">Registration</a>
+				<a class="btn btn-default navbar-btn" href="/forgot">Restore password</a>
 			<?php endif; ?>
 		</div>
 	</div>

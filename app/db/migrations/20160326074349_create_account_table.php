@@ -6,8 +6,8 @@ class CreateAccountTable extends AbstractMigration
 {
 	public function up()
 	{
-		$users = $this->table('account');
-		$users
+		$table = $this->table('account');
+		$table
 			->addColumn('uid', 'integer')
 			->addColumn('amount', 'float')
 			->addColumn('updated_at', 'datetime')
