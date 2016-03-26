@@ -113,6 +113,11 @@ class SecurityManager extends Component
 		return parent::getDI();
 	}
 
+	/**
+	 * @param $controller
+	 * @param $action
+	 * @return bool
+	 */
 	public function checkPermissions($controller, $action)
 	{
 		if (!$this->getDI()->acl->isPrivate($controller, $action)) {
