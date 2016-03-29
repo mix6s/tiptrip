@@ -5,7 +5,7 @@ namespace App\Main\Components;
 use App\Main\Forms\LoginForm;
 use App\Main\Forms\PasswordRestoreForm;
 use App\Main\Forms\RegistrationForm;
-use App\Main\Models\Users;
+use App\Main\Models\User;
 use Phalcon\Mvc\Model\MessageInterface;
 use Phalcon\Mvc\User\Component;
 use Phalcon\Security\Random;
@@ -19,17 +19,17 @@ class SecurityManager extends Component
 {
 	const SESSION_AUTH = 'auth-identity';
 
-	/** @var null|Users  */
+	/** @var null|User  */
 	private $_currentUser;
 
 	/**
 	 * @param RegistrationForm $form
 	 * @param array $data
-	 * @return Users|null
+	 * @return User|null
 	 */
 	public function register(RegistrationForm $form, array $data)
 	{
-		$user = new Users();
+		$user = new User();
 		$form->bind($data, $user);
 		if (!$form->isValid()) {
 			return null;
@@ -90,8 +90,8 @@ class SecurityManager extends Component
 		if (!$form->isValid()) {
 			return null;
 		}
-		/** @var Users $user */
-		$user = Users::findFirstByEmail($credentials->email);
+		/** @var User $user */
+		$user = User::findFirstByEmail($credentials->email);
 		if (!$user) {
 			$form->appendMessageFor('email', new Message('Пользователь не найден', 'email'));
 			return null;
@@ -117,7 +117,7 @@ class SecurityManager extends Component
 		if (!$form->isValid()) {
 			return null;
 		}
-		$user = Users::findFirstByEmail($credentials->email);
+		$user = User::findFirstByEmail($credentials->email);
 		if (!$user) {
 			$this->getDI()->security->hash(rand());
 			$form->appendMessageFor('password', new Message('Неправильная почта или пароль', 'password'));
@@ -132,7 +132,7 @@ class SecurityManager extends Component
 	}
 
 
-	public function authorizeUser(Users $user)
+	public function authorizeUser(User $user)
 	{
 		$this->getDI()->session->set(self::SESSION_AUTH, ['id' => $user->getId()]);
 	}
@@ -144,7 +144,7 @@ class SecurityManager extends Component
 	}
 
 	/**
-	 * @return Users|null
+	 * @return User|null
 	 */
 	public function getCurrentUser()
 	{
@@ -153,7 +153,7 @@ class SecurityManager extends Component
 			if (empty($identity['id'])) {
 				return null;
 			}
-			$user = Users::findFirstById($identity['id']);
+			$user = User::findFirstById($identity['id']);
 			if (empty($user)) {
 				return null;
 			}

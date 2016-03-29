@@ -14,8 +14,13 @@ use Phalcon\Mvc\Model\Validator;
  * @property string $password
  * @property-read Account $account
  */
-class Users extends Model
+class User extends Model
 {
+	public function getSource()
+	{
+		return "users";
+	}
+
 	private $id;
 	private $email;
 	private $password;
