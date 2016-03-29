@@ -2,6 +2,10 @@
 
 use App\Main\Components\Acl;
 use App\Main\Components\SecurityManager;
+use App\Main\Components\TripManager;
+use App\Main\Helpers\BootstrapTag;
+use Phalcon\Cache\Backend\Memcache AS Cache;
+use Phalcon\Cache\Frontend\Data;
 use Phalcon\Flash\Session AS Flash;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Mvc\Router;
@@ -12,6 +16,7 @@ use Phalcon\Db\Adapter\Pdo\Postgresql as DbAdapter;
 use Phalcon\Logger\Adapter\File as Logger;
 use Phalcon\Logger\Formatter\Line as Formatter;
 use Phalcon\Session\Adapter\Files as Session;
+use Phalcon\Mvc\Model\Metadata\Memcache AS MetadataAdapter;
 
 /** @var Config $config */
 
@@ -19,8 +24,38 @@ $di->setShared('securityManager', function () {
 	return new SecurityManager();
 });
 
+$di->setShared('tripManager', function () {
+	return new TripManager();
+});
+
 $di->setShared('acl', function () {
 	return new Acl();
+});
+
+$di->setShared('tag', function () {
+	return new BootstrapTag();
+});
+
+$di->setShared('cache', function () use ($config) {
+	return new Cache(new Data(), [
+		'prefix' => 'main_',
+		'host' => $config->cache->host,
+		'port' => $config->cache->port,
+	]);
+});
+
+$di->setShared('modelsMetadata', function () use ($config) {
+	$metaData = new MetadataAdapter(
+		[
+			'prefix' => 'metadata_',
+			'lifetime' => 86400,
+			'host' => $config->cache->host,
+			'port' => $config->cache->port,
+			'persistent' => false
+		]
+	);
+
+	return $metaData;
 });
 
 $di->set(
@@ -41,16 +76,16 @@ $di->set(
 						);
 						return false;
 						break;
-				/*	default:
+					default:
 						$dispatcher->forward(
 							[
 								'controller' => 'error',
 								'action' => 'uncaughtException',
-								'exception' => $exception,
+								'params' => [$exception],
 							]
 						);
 						return false;
-						break;*/
+						break;
 				}
 			}
 		);
@@ -61,8 +96,20 @@ $di->set(
 	}
 );
 
-$di->set('db', function () use ($config) {
-	return new DbAdapter(
+$di->set('db', function () use ($config, $di) {
+	/** @var \Phalcon\Events\Manager $eventsManager */
+	$eventsManager = $di->getShared('eventsManager');
+	/** @var \Phalcon\Logger\AdapterInterface $logger */
+	$logger = $di->getShared('logger');
+
+	$eventsManager->attach('db', function ($event, $connection) use ($logger) {
+		/** @var \Phalcon\Db\AdapterInterface $connection */
+		if ($event->getType() == 'beforeQuery') {
+			$logger->debug($connection->getSQLStatement());
+		}
+	});
+
+	$connection = new DbAdapter(
 		[
 			"host"     => $config->database->host,
 			"username" => $config->database->username,
@@ -71,6 +118,9 @@ $di->set('db', function () use ($config) {
 			"dbname"   => $config->database->name
 		]
 	);
+
+	$connection->setEventsManager($eventsManager);
+	return $connection;
 });
 
 $di->set('flash', function () {
@@ -101,6 +151,8 @@ $di->set(
 		$router->add("/logout", "User::logout");
 		$router->add("/profile", "User::profile");
 		$router->add("/forgot", "User::passwordRestore");
+		$router->add("/trip", "Trip::list");
+		$router->add("/trip/{id:[0-9]+}", "Trip::index");
 		return $router;
 	}
 );
@@ -124,12 +176,18 @@ $di->set(
 	}
 );
 
-$di->set('logger', function () use ($config) {
-	$filename = trim($config->get('logger')->filename, '\\/');
-	$path     = rtrim($config->get('logger')->path, '\\/') . DIRECTORY_SEPARATOR;
-	$formatter = new Formatter('%date% main.%type%: %message%', '[Y-m-d H:i:s]');
-	$logger    = new Logger($path . $filename);
-	$logger->setFormatter($formatter);
-	$logger->setLogLevel($config->get('logger')->logLevel);
-	return $logger;
-});
+$di->set(
+	'logger',
+	function () use ($config) {
+		$filename = trim($config->get('logger')->filename, '\\/');
+		$path = rtrim($config->get('logger')->path, '\\/') . DIRECTORY_SEPARATOR;
+		$formatter = new Formatter('%date% main.%type%: %message%', '[Y-m-d H:i:s]');
+		$logger = new Logger($path . $filename);
+		$logger->setFormatter($formatter);
+		$logLevel = $config->get('logger')->logLevel;
+		if (null !== $logLevel) {
+			$logger->setLogLevel($logLevel);
+		}
+		return $logger;
+	}
+);

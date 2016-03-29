@@ -24,8 +24,8 @@ class CreateTripTable extends AbstractMigration
 			->addColumn('multiplicity', 'integer')
 			->addColumn('created_at', 'datetime')
 			->addColumn('updated_at', 'datetime')
-			->addColumn('started_at', 'datetime')
-			->addColumn('ended_at', 'datetime')
+			->addColumn('start_dt', 'datetime')
+			->addColumn('end_dt', 'datetime')
 			->addColumn('ended_status', 'string', ['limit' => 20, 'null' => true])
 			->addColumn('active', 'integer', ['null' => true, 'default' => 0])
 			->save();

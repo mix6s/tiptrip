@@ -139,7 +139,7 @@ class SecurityManager extends Component
 
 	public function unauthorizeCurrentUser()
 	{
-		$this->_currentUser == null;
+		$this->_currentUser = null;
 		$this->getDI()->session->remove(self::SESSION_AUTH);
 	}
 
@@ -162,7 +162,10 @@ class SecurityManager extends Component
 		return $this->_currentUser;
 	}
 
-	public function isCurrentUserLoggin()
+	/**
+	 * @return bool
+	 */
+	public function isCurrentUserLogin()
 	{
 		return $this->getCurrentUser() !== null;
 	}

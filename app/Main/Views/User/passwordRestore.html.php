@@ -12,7 +12,7 @@
 					<label for="login" class="col-sm-2 control-label">Email</label>
 
 					<div class="col-sm-10">
-						<?= $form->render("email"); ?>
+						<?= $this->tag->renderFromElement($form, "email"); ?>
 						<?php foreach ($form->getMessagesFor("email") as $message) : ?>
 							<?= $message ?>
 						<?php endforeach; ?>

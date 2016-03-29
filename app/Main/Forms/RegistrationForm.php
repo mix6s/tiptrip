@@ -3,7 +3,7 @@
 namespace App\Main\Forms;
 
 use Phalcon\Filter;
-use Phalcon\Forms\Form;
+use App\Main\Components\Form;
 use Phalcon\Forms\Element;
 use Phalcon\Validation\Validator;
 
@@ -41,10 +41,5 @@ class RegistrationForm extends Form
 			]
 		));
 		$this->add((new Element\Text("email"))->addFilter(Filter::FILTER_TRIM));
-	}
-
-	public function appendMessageFor($attribute, $message)
-	{
-		$this->_messages[$attribute][] = $message;
 	}
 }

@@ -10,7 +10,7 @@
 			<div class="form-group">
 				<label for="login" class="col-sm-2 control-label">Email</label>
 				<div class="col-sm-10">
-					<?= $form->render("email"); ?>
+					<?= $this->tag->renderFromElement($form, "email"); ?>
 					<?php foreach ($form->getMessagesFor("email") as $message) : ?>
 						<?= $message ?>
 					<?php endforeach; ?>
@@ -19,7 +19,7 @@
 			<div class="form-group"><label for="password" class="col-sm-2 control-label">Password</label>
 
 				<div class="col-sm-10">
-					<?= $form->render("password"); ?>
+					<?= $this->tag->renderFromElement($form, "password"); ?>
 					<?php foreach ($form->getMessagesFor("password") as $message) : ?>
 						<?= $message ?>
 					<?php endforeach; ?>

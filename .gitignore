@@ -1,8 +1,8 @@
 /.idea
 /app/config/*
-/logs
 !/app/config/config.php
 !/app/config/loader.php
 !/app/config/services.php
+!/app/config/constants.php
 
 /vendor/
