@@ -22,5 +22,6 @@ return [
 	'logger' => [
 		'path'     => APP_PATH . '../runtime/',
 		'filename' => 'application.log',
+		'logLevel' => null,
 	]
 ];

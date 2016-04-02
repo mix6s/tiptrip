@@ -20,6 +20,7 @@ $config = new Config(require('../app/config/config.php'));
 $config->merge(new Config(require(APP_PATH . 'config/' . $env . '.php')));
 $config->merge(new Config(['env' => $env]));
 require APP_PATH . 'config/loader.php';
+require APP_PATH . '../vendor/autoload.php';
 $di = new DI();
 $di->set('config', $config);
 require APP_PATH . 'config/services.php';

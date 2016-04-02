@@ -17,7 +17,7 @@ class TripController extends Controller
 	{
 		$form = new TripFilterForm();
 		$form->bind($this->request->get());
-		$trips = $this->getDI()->tripManager->getTrips($form);
+		$trips = $this->getDI()->tripManager->getTripsByFilterForm($form);
 		$this->view->setVars(
 			[
 				'trips' => $trips,

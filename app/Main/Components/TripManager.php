@@ -4,6 +4,7 @@ namespace App\Main\Components;
 
 use App\Main\Forms\TripFilterForm;
 use App\Main\Models\Direction;
+use App\Main\Models\Location;
 use App\Main\Models\Trip;
 use Phalcon\Mvc\User\Component;
 use Phalcon\Validation\Message;
@@ -20,19 +21,51 @@ class TripManager extends Component
 
 	const CACHE_DIRECTIONS = 'directions';
 
+	const DEFAULT_LIMIT = 20;
+
 	/** @var Direction[]|null */
 	private $_directions = null;
 
-	public function getTrips(TripFilterForm $filter)
+	/**
+	 * @param TripFilterForm $filter
+	 * @return \Phalcon\Mvc\Model\ResultsetInterface
+	 */
+	public function getTripsByFilterForm(TripFilterForm $filter)
+	{
+		$page = (int)$filter->getValue('page');
+		return $this->getTrips([
+			'status' => $filter->getValue('status'),
+			'direction' => $filter->getValue('direction'),
+			'onlyFav' => $filter->getValue('onlyFav'),
+			'priceTo' => $filter->getValue('priceTo'),
+			'priceFrom' => $filter->getValue('priceFrom'),
+			'offset' => (int)$filter->getValue('page') * self::DEFAULT_LIMIT,
+		]);
+	}
+
+	public function getLocationForNewAttempt()
+	{
+		/** @var Location $location */
+		$location = Location::findFirst(['deleted = 0']);
+		if (empty($location)) {
+
+		}
+		$location->delete();
+		return $location;
+	}
+
+	/**
+	 * @param array $filter
+	 * @return \Phalcon\Mvc\Model\ResultsetInterface
+	 */
+	private function getTrips(array $filter)
 	{
 		$query = Trip::query()->where("active = :status:", ["status" => "1"]);
-		$direction = $filter->getValue('direction');
-		if (!empty($direction)) {
-			$query->andWhere("direction_id = :direction:", ["direction" => $direction]);
+		if (!empty($filter['direction'])) {
+			$query->andWhere("direction_id = :direction:", ["direction" => $filter['direction']]);
 		}
 
-		$status = $filter->getValue('status');
-		switch ($status) {
+		switch (!empty($filter['status']) ? $filter['status'] : null) {
 			case self::STATUS_SOON:
 				$query->andWhere("start_dt > NOW()");
 				break;
@@ -43,28 +76,28 @@ class TripManager extends Component
 				$query->andWhere("end_dt <= NOW()");
 				break;
 			default:
-				$query->andWhere("end_dt > NOW()");
 				break;
 		}
 
-		$priceFrom = $filter->getValue('priceFrom');
-		if (!empty($priceFrom)) {
-			$query->andWhere("price >= :priceFrom:", ["priceFrom" => (float)$priceFrom]);
+		if (!empty($filter['priceFrom'])) {
+			$query->andWhere("price >= :priceFrom:", ["priceFrom" => (float)$filter['priceFrom']]);
 		}
 
-		$priceTo = $filter->getValue('priceTo');
-		if (!empty($priceTo)) {
-			$query->andWhere("price <= :priceTo:", ["priceTo" => (float)$priceTo]);
+		if (!empty($filter['priceTo'])) {
+			$query->andWhere("price <= :priceTo:", ["priceTo" => (float)$filter['priceTo']]);
 		}
 
-		$onlyFav = $filter->getValue('onlyFav');
-		if ($onlyFav) {
+		if (!empty($filter['onlyFav'])) {
 		}
-		return $query->execute();
+
+		return $query->limit(
+			!empty($filter['limit']) ? (int)$filter['limit'] : self::DEFAULT_LIMIT,
+			!empty($filter['offset']) ? (int)$filter['offset'] : 0
+		)->execute();
 	}
 
 	/**
-	 * @return \Phalcon\Mvc\Model\Resultset\Simple
+	 * @return \App\Main\Models\Direction[]
 	 */
 	public function getDirections()
 	{

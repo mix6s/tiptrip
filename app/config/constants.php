@@ -1,4 +1,3 @@
 <?php
-define('APP_PATH', realpath('../app') . '/');
-
+define('APP_PATH', realpath(__DIR__ . '/../') . '/');
 ?>

@@ -3,7 +3,8 @@
     "description": "Tiptrip application",
     "minimum-stability": "stable",
     "require": {
-        "robmorgan/phinx": "^0.5.3"
+        "robmorgan/phinx": "^0.5.3",
+        "guzzlehttp/guzzle": "^6.2"
     },
     "require-dev": {
         "phalcon/devtools": "dev-master"

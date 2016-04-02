@@ -146,6 +146,7 @@ $di->set(
 	'router',
 	function () use ($config){
 		$router = new Router();
+		$router->add("/clear_cache", "Index::clearCache");
 		$router->add("/login", "User::login");
 		$router->add("/registration", "User::registration");
 		$router->add("/logout", "User::logout");
@@ -153,6 +154,7 @@ $di->set(
 		$router->add("/forgot", "User::passwordRestore");
 		$router->add("/trip", "Trip::list");
 		$router->add("/trip/{id:[0-9]+}", "Trip::index");
+		$router->add("/attempt", "Attempt::index");
 		return $router;
 	}
 );

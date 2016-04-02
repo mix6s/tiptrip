@@ -4,8 +4,7 @@ use Phalcon\Config;
 use Phalcon\Config\Adapter\Yaml as ConfigYaml;
 
 $env = 'dev';
-define('APP_PATH', realpath('app') . '/' );
-$config = new Config(require(APP_PATH . 'config/config.php'));
+$config = new Config(require(realpath('app') . '/config/config.php'));
 $config->merge(new Config(require(APP_PATH . 'config/' . $env . '.php')));
 $config->merge(new Config(['env' => $env]));
 
