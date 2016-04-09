@@ -16,6 +16,8 @@ use Phalcon\Mvc\Model\Validator;
  * @property-read float $ticketPrice
  * @property-read float $price
  * @property-read int $multiplicity
+ * @property-read int $title
+ * @property-read int $hotelTitle
  */
 class Trip extends Model
 {
@@ -50,6 +52,22 @@ class Trip extends Model
 				]
 			)
 		);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getTitle()
+	{
+		return $this->readAttribute('title');
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getHotelTitle()
+	{
+		return $this->readAttribute('hotel_title');
 	}
 
 	/**

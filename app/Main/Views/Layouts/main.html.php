@@ -1,30 +1,51 @@
+<?php
+/**
+ * @var \Phalcon\Mvc\View $this
+ * @var App\Main\Components\DI $di
+ */
+$di = $this->getDI();
+?>
 <!DOCTYPE html>
-<html lang="en">
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js"> <!--<![endif]-->
 <head>
 	<meta charset="utf-8">
 	<meta http-equiv="X-UA-Compatible" content="IE=edge">
-	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
-	<title>Bootstrap 101 Template</title>
-
-	<!-- Bootstrap -->
-	<link href="/assets/bootstrap-3.3.6/css/bootstrap.min.css" rel="stylesheet">
-
-	<!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
-	<!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
-	<!--[if lt IE 9]>
-	<script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-	<script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-	<![endif]-->
+	<title></title>
+	<meta name="description" content="">
+	<meta name="viewport" content="width=device-width">
+	<link rel="shortcut icon" href="icon/favicon.ico">
+	<link rel="stylesheet" href="css/bootstrap.css">
+	<link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-<?= $this->partial("shared/nav"); ?>
-<?= $this->flash->output() ?>
-<?= $this->getContent(); ?>
 
-<!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
-<!-- Include all compiled plugins (below), or include individual files as needed -->
-<script src="/assets/bootstrap-3.3.6/js/bootstrap.min.js"></script>
+<!--[if lt IE 8]>
+<div class="browse-happy-wrapper">
+	<p>Вы используете <strong>устаревший</strong> браузер. Пожалуйста, <a href="http://browsehappy.com/">обновите ваш браузер</a>, чтобы сайт отображался корректно.</p>
+</div>
+<![endif]-->
+<div id="content-overlay" class="content-overlay">
+	<i id="mobile-navigation-close" class="icon-close"></i>
+</div>
+<?= $this->partial("shared/mobile/navigation"); ?>
+<div class="container">
+	<?= $this->partial("shared/header"); ?>
+	<?php if ($this->router->getMatchedRoute()->getName() == 'index'): ?>
+		<?= $this->partial("shared/swiper_welcome"); ?>
+	<?php endif; ?>
+</div>
+<main class="content-main">
+	<?= $this->flash->output(); ?>
+	<?= $this->getContent(); ?>
+</main>
+<?= $this->partial("shared/footer"); ?>
+<script type="text/javascript" src="js/jquery-2.2.2.js"></script>
+<script type="text/javascript" src="js/bootstrap.min.js"></script>
+<script type="text/javascript" src="js/swiper.min.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+<?= $di->popupManager->output() ?>
 </body>
 </html>

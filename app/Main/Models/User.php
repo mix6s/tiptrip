@@ -175,12 +175,12 @@ class User extends Model
 	 */
 	public function getAccount()
 	{
-		if (null === $this->account) {
-			$this->account = Account::findByUid($this->id);
-			if (!$this->account) {
-				$this->account = $this->createUserAccount();
+		if (null === $this->_account) {
+			$this->_account = Account::findFirstByUid($this->id);
+			if (!$this->_account) {
+				$this->_account = $this->createUserAccount();
 			}
 		}
-		return $this->account;
+		return $this->_account;
 	}
 }

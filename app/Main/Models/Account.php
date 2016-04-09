@@ -15,10 +15,9 @@ use Phalcon\Mvc\Model\Validator;
  */
 class Account extends Model
 {
-	protected $id;
-	protected $uid;
-	protected $amount;
-	protected $updated_at;
+	private $id;
+	private $uid;
+	private $amount;
 
 	public function beforeCreate()
 	{
@@ -48,7 +47,7 @@ class Account extends Model
 	 */
 	public function getUid()
 	{
-		return $this->uid;
+		return $this->readAttribute('uid');
 	}
 
 	/**
@@ -56,7 +55,7 @@ class Account extends Model
 	 */
 	public function getId()
 	{
-		return $this->id;
+		return $this->readAttribute('id');
 	}
 
 	/**
@@ -64,7 +63,7 @@ class Account extends Model
 	 */
 	public function getAmount()
 	{
-		return $this->amount;
+		return $this->readAttribute('amount');
 	}
 
 	/**
@@ -72,6 +71,6 @@ class Account extends Model
 	 */
 	public function setAmount($value)
 	{
-		$this->amount = $value;
+		$this->writeAttribute('amount', $value);
 	}
 }

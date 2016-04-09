@@ -1,12 +1,15 @@
 <?php
 
 use App\Main\Components\Acl;
+use App\Main\Components\PopupManager;
 use App\Main\Components\SecurityManager;
 use App\Main\Components\TripManager;
 use App\Main\Helpers\BootstrapTag;
+use App\Main\Forms;
 use Phalcon\Cache\Backend\Memcache AS Cache;
 use Phalcon\Cache\Frontend\Data;
 use Phalcon\Flash\Session AS Flash;
+use Phalcon\Forms\Manager;
 use Phalcon\Mvc\Dispatcher;
 use Phalcon\Mvc\Router;
 use Phalcon\Mvc\View;
@@ -26,6 +29,24 @@ $di->setShared('securityManager', function () {
 
 $di->setShared('tripManager', function () {
 	return new TripManager();
+});
+
+$di->setShared('forms', function () {
+	$manager = new Manager();
+	$forms = [
+		'registration' => Forms\RegistrationForm::class,
+		'login' => Forms\LoginForm::class,
+		'trip_filter' => Forms\TripFilterForm::class,
+		'password_restore' => Forms\TripFilterForm::class,
+	];
+	foreach ($forms AS $name => $class) {
+		$manager->set($name, new $class());
+	}
+	return $manager;
+});
+
+$di->setShared('popupManager', function () {
+	return new PopupManager();
 });
 
 $di->setShared('acl', function () {
@@ -146,14 +167,15 @@ $di->set(
 	'router',
 	function () use ($config){
 		$router = new Router();
+		$router->add("/", "Index::index")->setName('index');
 		$router->add("/clear_cache", "Index::clearCache");
-		$router->add("/login", "User::login");
-		$router->add("/registration", "User::registration");
-		$router->add("/logout", "User::logout");
-		$router->add("/profile", "User::profile");
+		$router->add("/login", "User::login")->setName('login');
+		$router->add("/registration", "User::registration")->setName('registration');
+		$router->add("/logout", "User::logout")->setName('logout');;
+		$router->add("/profile", "User::profile")->setName('profile');
 		$router->add("/forgot", "User::passwordRestore");
-		$router->add("/trip", "Trip::list");
-		$router->add("/trip/{id:[0-9]+}", "Trip::index");
+		$router->add("/trip", "Trip::list")->setName('trips');
+		$router->add("/trip/{id:[0-9]+}", "Trip::index")->setName('trip');
 		$router->add("/attempt", "Attempt::index");
 		return $router;
 	}

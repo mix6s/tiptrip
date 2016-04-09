@@ -65,21 +65,15 @@ use App\Main\Models\Trip;
 			</form>
 		</div>
 	</div>
-
-<div class="row">
-	<div class="col-md-6 col-md-offset-3">
-		<ul>
-			<?php
-			foreach ($trips as $trip): ?>
-				<li>
-					<?= $trip->id ?>
-					<?= $trip->startDt->format('d.m.Y H:i') ?>
-					<?= $trip->direction->title ?>
-					<?= $trip->ticketPrice ?>
-					<a href="/trip/<?= $trip->id ?>">Details</a>
-				</li>
+	<section class="tours-wrapper tours-preview section container">
+		<div class="section-title">Список туров:</div>
+		<div class="row">
+			<?php foreach ($trips AS $trip): ?>
+				<?= $this->partial("shared/trip_card", ['trip' => $trip]); ?>
 			<?php endforeach; ?>
-		</ul>
-	</div>
-</div>
+		</div>
+		<div class="text-center tours-all-link">
+			<a href="<?= $this->url->get(['for' => 'trips'])?>">Смотреть все туры</a>
+		</div>
+	</section>
 <?= $this->getContent(); ?>

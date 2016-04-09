@@ -3,12 +3,22 @@
 namespace App\Main\Controllers;
 
 use App\Main\Components\Controller;
+use App\Main\Components\TripManager;
+use App\Main\Forms\TripFilterForm;
+use App\Main\Models\Trip;
 
 class IndexController extends Controller
 {
 	public function indexAction()
 	{
-		
+		$form = new TripFilterForm();
+		$form->bind(['status' => TripManager::STATUS_ACTIVE]);
+		$trips = $this->getDI()->tripManager->getTripsByFilterForm($form);
+		$this->view->setVars(
+			[
+				'trips' => $trips,
+			]
+		);
 	}
 
 	public function clearCacheAction()
