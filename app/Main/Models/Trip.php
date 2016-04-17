@@ -18,9 +18,14 @@ use Phalcon\Mvc\Model\Validator;
  * @property-read int $multiplicity
  * @property-read int $title
  * @property-read int $hotelTitle
+ * @property-read strung $status
+ * @property-read User|null $winner
  */
 class Trip extends Model
 {
+	/** @var User|null  */
+	private $_winner = null;
+
 	public function beforeCreate()
 	{
 
@@ -124,5 +129,28 @@ class Trip extends Model
 	public function getTicketPrice()
 	{
 		return ceil($this->getPrice() / $this->getMultiplicity());
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getStatus()
+	{
+		return $this->getDI()->tripManager->getTripStatus($this);
+	}
+
+	/**
+	 * @return User|null
+	 */
+	public function getWinner()
+	{
+		$winnerId = $this->readAttribute('winner_id');
+		if (empty($winnerId)) {
+			return null;
+		}
+		if (null === $this->_winner) {
+			$this->_winner = User::findFirst($winnerId);
+		}
+		return $this->_winner;
 	}
 }

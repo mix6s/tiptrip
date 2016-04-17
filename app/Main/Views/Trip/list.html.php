@@ -12,7 +12,7 @@ use App\Main\Models\Trip;
 		<div class="col-md-6 col-md-offset-3">
 			<form class="form-horizontal" method="get">
 				<div class="form-group">
-					<label class="col-sm-2 control-label">direction</label>
+					<label class="col-sm-2 control-label">Направление</label>
 
 					<div class="col-sm-10">
 						<?= $this->tag->renderFromElement($form, "direction"); ?>
@@ -22,7 +22,7 @@ use App\Main\Models\Trip;
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label">status</label>
+					<label class="col-sm-2 control-label">Статус</label>
 					<div class="col-sm-10">
 						<?= $this->tag->renderFromElement($form, "status"); ?>
 						<?php foreach ($form->getMessagesFor("status") as $message) : ?>
@@ -31,7 +31,7 @@ use App\Main\Models\Trip;
 					</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-2 control-label">price</label>
+					<label class="col-sm-2 control-label">Цена тура</label>
 					<div class="col-sm-5">
 						<?= $this->tag->renderFromElement($form, "priceFrom"); ?>
 						<?php foreach ($form->getMessagesFor("priceFrom") as $message) : ?>
@@ -49,7 +49,7 @@ use App\Main\Models\Trip;
 					<div class="col-sm-offset-2 col-sm-10">
 						<div class="checkbox" for="onlyFav">
 							<label>
-								<?= $this->tag->renderFromElement($form, "onlyFav", ['class' => '']); ?> Only fav
+								<?= $this->tag->renderFromElement($form, "onlyFav", ['class' => '']); ?> Искать в избранном
 							</label>
 						</div>
 						<?php foreach ($form->getMessagesFor("onlyFav") as $message) : ?>
@@ -59,13 +59,13 @@ use App\Main\Models\Trip;
 				</div>
 				<div class="form-group">
 					<div class="col-sm-offset-2 col-sm-10">
-						<button type="submit" class="btn btn-default">Search</button>
+						<button type="submit" class="btn btn-default">Поиск</button>
 					</div>
 				</div>
 			</form>
 		</div>
 	</div>
-	<section class="tours-wrapper tours-preview section container">
+	<section class="tours-wrapper tours-list section container">
 		<div class="section-title">Список туров:</div>
 		<div class="row">
 			<?php foreach ($trips AS $trip): ?>

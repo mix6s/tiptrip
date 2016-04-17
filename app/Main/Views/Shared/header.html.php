@@ -31,7 +31,7 @@ $di = $this->getDI();
 				<img src="images/delete/avatar.jpg" alt="">
 			</div>
 			<div class="header-profile-account">
-				<div class="header-profile-sum">Баланс: <span class="highlight-sum"><?= $di->tag->rub($di->securityManager->getCurrentUser()->account->amount)?></i></span></div>
+				<div class="header-profile-sum">Баланс: <span class="highlight-green"><?= $di->tag->rub($di->securityManager->getCurrentUser()->account->amount)?></i></span></div>
 				<a href="">Пополнить счет</a>
 			</div>
 			<div class="header-profile-menu">

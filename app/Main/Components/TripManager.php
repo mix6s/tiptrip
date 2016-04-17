@@ -18,6 +18,7 @@ class TripManager extends Component
 	const STATUS_SOON = 'soon';
 	const STATUS_ACTIVE = 'active';
 	const STATUS_ENDED = 'ended';
+	const STATUS_WINNER_SEARCH = 'winner_search';
 
 	const CACHE_DIRECTIONS = 'directions';
 
@@ -50,7 +51,7 @@ class TripManager extends Component
 		if (empty($location)) {
 
 		}
-		$location->delete();
+		//$location->delete();
 		return $location;
 	}
 
@@ -73,7 +74,10 @@ class TripManager extends Component
 				$query->andWhere("start_dt <= NOW() AND end_dt > NOW()");
 				break;
 			case self::STATUS_ENDED:
-				$query->andWhere("end_dt <= NOW()");
+				$query->andWhere("end_dt <= NOW() AND winner_id IS NOT NULL");
+				break;
+			case self::STATUS_WINNER_SEARCH:
+				$query->andWhere("end_dt <= NOW() AND winner_id ISNULL");
 				break;
 			default:
 				break;
@@ -132,9 +136,9 @@ class TripManager extends Component
 	public function getStatuses()
 	{
 		return [
-			self::STATUS_SOON => 'скоро',
-			self::STATUS_ACTIVE => 'активен',
-			self::STATUS_ENDED => 'завершен',
+			self::STATUS_SOON => 'Скоро',
+			self::STATUS_ACTIVE => 'Активен',
+			self::STATUS_ENDED => 'Завершен',
 		];
 	}
 
@@ -144,5 +148,22 @@ class TripManager extends Component
 	public function getDI()
 	{
 		return parent::getDI();
+	}
+
+	/**
+	 * @param Trip $trip
+	 * @return string
+	 */
+	public function getTripStatus(Trip $trip)
+	{
+		$now = time();
+		if ($trip->startDt->getTimestamp() > $now) {
+			return self::STATUS_SOON;
+		} elseif ($trip->startDt->getTimestamp() <= $now && $trip->endDt->getTimestamp() > $now) {
+			return self::STATUS_ACTIVE;
+		} elseif ($trip->endDt->getTimestamp() <= $now && null === $trip->winner) {
+			return self::STATUS_WINNER_SEARCH;
+		}
+		return self::STATUS_ENDED;
 	}
 }

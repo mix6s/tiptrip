@@ -157,7 +157,7 @@ $di = $this->getDI();
 	<div class="section-title">Активные туры:</div>
 	<div class="row">
 		<?php foreach ($trips AS $trip): ?>
-			<?= $this->partial("shared/trip_card", ['trip' => $trip]); ?>
+			<?= $this->partial("shared/trip_card", ['trip' => $trip, 'style' => 'min']); ?>
 		<?php endforeach; ?>
 	</div>
 	<div class="text-center tours-all-link">

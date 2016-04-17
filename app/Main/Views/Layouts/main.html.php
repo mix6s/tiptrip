@@ -17,8 +17,8 @@ $di = $this->getDI();
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width">
 	<link rel="shortcut icon" href="icon/favicon.ico">
-	<link rel="stylesheet" href="css/bootstrap.css">
-	<link rel="stylesheet" href="css/style.css">
+	<link rel="stylesheet" href="/css/bootstrap.css">
+	<link rel="stylesheet" href="/css/style.css">
 </head>
 <body>
 
@@ -33,19 +33,19 @@ $di = $this->getDI();
 <?= $this->partial("shared/mobile/navigation"); ?>
 <div class="container">
 	<?= $this->partial("shared/header"); ?>
-	<?php if ($this->router->getMatchedRoute()->getName() == 'index'): ?>
-		<?= $this->partial("shared/swiper_welcome"); ?>
-	<?php endif; ?>
 </div>
+<?php if ($this->router->getMatchedRoute()->getName() == 'index'): ?>
+	<?= $this->partial("shared/swiper_welcome"); ?>
+<?php endif; ?>
 <main class="content-main">
 	<?= $this->flash->output(); ?>
 	<?= $this->getContent(); ?>
 </main>
 <?= $this->partial("shared/footer"); ?>
-<script type="text/javascript" src="js/jquery-2.2.2.js"></script>
-<script type="text/javascript" src="js/bootstrap.min.js"></script>
-<script type="text/javascript" src="js/swiper.min.js"></script>
-<script type="text/javascript" src="js/main.js"></script>
+<script type="text/javascript" src="/js/jquery-2.2.2.js"></script>
+<script type="text/javascript" src="/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="/js/swiper.min.js"></script>
+<script type="text/javascript" src="/js/main.js"></script>
 <?= $di->popupManager->output() ?>
 </body>
 </html>
