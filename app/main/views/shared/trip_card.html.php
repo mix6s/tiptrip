@@ -189,7 +189,7 @@ if (!isset($style)) {
 						</div>
 						<div class="tour-description-right">
 							<div class="tour-people-info">
-								<i class="icon-question"></i> <span>Путешественник найден</span>
+								<i class="icon-complete"></i> <span>Путешественник найден</span>
 							</div>
 						</div>
 					</div>

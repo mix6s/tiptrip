@@ -30,6 +30,73 @@ class TripManager extends Component
 	/** @var Direction[]|null */
 	private $_directions = null;
 
+	/**
+	 * @param Trip $trip
+	 * @return Trip|null
+	 */
+	public function playTrip(Trip $trip)
+	{
+		/** @var Attempt $attempt */
+		$attempt = Attempt::findFirst([
+			[
+				"conditions" => "trip_id = :trip_id:",
+				"bind"       => ["trip_id" => $trip->id],
+				"order" => "COALESCE(distance, 0)",
+			]
+		]);
+		if (empty($attempt)) {
+			return null;
+		}
+		$trip->save([
+			'winner_id' => $attempt->user->id,
+			'attempt_id' => $attempt->id,
+			'end_dt' => new RawValue("now()")
+		]);
+		$trip->refresh();
+		return $trip;
+	}
+
+
+	/**
+	 * @param User $user
+	 * @return mixed
+	 */
+	public function getUserWinTrips(User $user)
+	{
+		return $this->modelsManager->createBuilder()
+			->addFrom(Trip::class, 'trip')
+			->columns('trip.*, attempt.*')
+			->join(Attempt::class, 'attempt.id = trip.attempt_id', 'attempt')
+			->where(
+				"attempt.user_id = :user_id:",
+				["user_id" => $user->id]
+			)
+			->orderBy('trip.updated_at DESC, attempt.id DESC')
+			->getQuery()
+			->execute();
+	}
+
+	public function getUserAttempts(User $user)
+	{
+		return $this->modelsManager->createBuilder()
+			->addFrom(Attempt::class, 'attempt')
+			->columns('trip.*, attempt.*')
+			->join(Trip::class, 'trip.id = trip_id ', 'trip')
+			->where(
+				"user_id = :user_id:",
+				["user_id" => $user->id]
+			)
+			->orderBy('trip.updated_at DESC, attempt.id DESC')
+			->getQuery()
+			->execute();
+	}
+
+	/**
+	 * @param User $user
+	 * @param Trip $trip
+	 * @param array $location
+	 * @return Attempt|null
+	 */
 	public function makeGuess(User $user, Trip $trip, array $location)
 	{
 		if (empty($location['lat'])) {

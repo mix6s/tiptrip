@@ -21,6 +21,7 @@ class CreateTripTable extends AbstractMigration
 			->addColumn('specification', 'jsonb', ['null' => true])
 			->addColumn('direction_id', 'integer')
 			->addColumn('winner_id', 'integer', ['null' => true])
+			->addColumn('attempt_id', 'integer', ['null' => true])
 			->addColumn('multiplicity', 'integer')
 			->addColumn('created_at', 'datetime')
 			->addColumn('updated_at', 'datetime')

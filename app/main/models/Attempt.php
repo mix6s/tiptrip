@@ -16,6 +16,7 @@ use Phalcon\Mvc\Model\Behavior\Timestampable;
  * @property-read float|null $distance
  * @property-read int $count
  * @property-read \DateTime $expiredAt
+ * @property-read \DateTime $createdAt
  * @property-read int $secondsToExpire
  */
 class Attempt extends Model
@@ -141,6 +142,14 @@ class Attempt extends Model
 	public function getExpiredAt()
 	{
 		return new \DateTime($this->readAttribute('expired_at'));
+	}
+
+	/**
+	 * @return \DateTime
+	 */
+	public function getCreatedAt()
+	{
+		return new \DateTime($this->readAttribute('created_at'));
 	}
 
 	/**

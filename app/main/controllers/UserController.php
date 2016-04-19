@@ -3,9 +3,12 @@
 namespace App\Main\Controllers;
 
 use App\Main\Components\Controller;
+use App\Main\Components\TripManager;
 use App\Main\Forms\LoginForm;
 use App\Main\Forms\PasswordRestoreForm;
 use App\Main\Forms\RegistrationForm;
+use App\Main\Models\Attempt;
+use App\Main\Models\Trip;
 use Phalcon\Validation\Exception;
 
 class UserController extends Controller
@@ -17,7 +20,6 @@ class UserController extends Controller
 			$user = $this->getDI()->securityManager->authentificate($form, $this->request->getPost());
 			if ($user) {
 				$this->getDI()->securityManager->authorizeUser($user);
-				$this->flash->success('Авторизация прошла успешно');
 				return $this->response->redirect('/');
 			}
 		}
@@ -72,6 +74,33 @@ class UserController extends Controller
 
 	public function profileAction()
 	{
+		$user = $this->getDI()->securityManager->getCurrentUser();
+		$userAttempts = $this->getDI()->tripManager->getUserAttempts($user);
+		$winTrips = $this->getDI()->tripManager->getUserWinTrips($user);
+		$tripsAttempts = [];
+		$tripsAttemptsClosed = [];
+		foreach ($userAttempts as $data) {
+			/** @var Trip $trip */
+			$trip = $data->trip;
+			if ($trip->status == TripManager::STATUS_ACTIVE) {
+				if (empty($tripsAttempts[$trip->id])) {
+					$tripsAttempts[$trip->id] = ['trip' => $trip, 'attempts' => []];
+				}
+				$tripsAttempts[$trip->id]['attempts'][] = $data->attempt;
+			} else {
+				if (empty($tripsAttemptsClosed[$trip->id])) {
+					$tripsAttemptsClosed[$trip->id] = ['trip' => $trip, 'attempts' => []];
+				}
+				$tripsAttemptsClosed[$trip->id]['attempts'][] = $data->attempt;
+			}
+		}
 
+		$this->view->setVars(
+			[
+				'tripsAttempts' => $tripsAttempts,
+				'tripsAttemptsClosed' => $tripsAttemptsClosed,
+				'winTrips' => $winTrips
+			]
+		);
 	}
 }

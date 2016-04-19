@@ -865,6 +865,11 @@ a .highlight-green:focus
     color: #6cb800;
 }
 
+.highlight-pink
+{
+    color: #f26a83;
+}
+
 /* grid */
 .vertical-center
 {
@@ -3583,4 +3588,373 @@ button.swiper-pagination-bullet
         width: 305px;
         height: 220px;
     }
+}
+
+/*$defaultBgSecond: #454161;*/
+.user-chances-tour-content
+{
+    float: none;
+    overflow: hidden;
+
+    margin: 0 auto 25px; 
+    padding: 0;
+
+    border-radius: 5px;
+    box-shadow: 1px 0 5px #c5cace;
+}
+.user-chances-tour-content > p
+{
+    font-size: 18px;
+
+    padding: 0 20px; 
+
+    -webkit-columns: #7e858a;
+       -moz-columns: #7e858a;
+            columns: #7e858a;
+}
+
+.user-chances-tour-title
+{
+    font-size: 24px;
+    font-weight: bold;
+
+    margin: 20px;
+}
+
+.user-chances-tour-info
+{
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display:         flex;
+
+    border-top: 1px solid #e9ebec;
+    border-bottom: 1px solid #e9ebec; 
+    background: #f7f8fa;
+
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+            justify-content: space-between;
+}
+.user-chances-tour-info > div
+{
+    line-height: 26px; 
+
+    padding: 30px 20px 0;
+}
+.user-chances-tour-info .user-chances-tour-destination
+{
+    font-size: 18px;
+
+    color: #92a8d1;
+}
+.user-chances-tour-info .user-chances-tour-place
+{
+    font-size: 12px;
+
+    color: #7e858a;
+}
+.user-chances-tour-info .right-side
+{
+    text-align: right;
+}
+
+.user-chances-traveler-status
+{
+    font-family: 'proxima_nova_rgbold';
+    font-size: 12px;
+
+    text-transform: uppercase;
+}
+
+.user-chances-tour-date
+{
+    font-family: 'proxima_nova_rgbold'; 
+    font-size: 12px;
+
+    color: #7e858a;
+}
+
+.user-chances-tour-list table.table
+{
+    margin-bottom: 0; 
+    padding: 0 20px;
+}
+.user-chances-tour-list table.table th
+{
+    color: #92a8d1;
+    border-bottom: none;
+}
+.user-chances-tour-list table.table td
+{
+    color: #7e858a;
+}
+.user-chances-tour-list table.table td,
+.user-chances-tour-list table.table th
+{
+    font-size: 12px;
+
+    width: 25%;
+    padding: 17px 20px;
+
+    text-transform: uppercase;
+}
+
+.user-chances-tour-list thead tr
+{
+    background: #eff0f3;
+}
+
+.user-chances-tour-button
+{
+    margin: 20px 0;
+
+    text-align: center;
+}
+.user-chances-tour-button .btn
+{
+    margin: 0 10px;
+}
+
+.user-chances-timer
+{
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display:         flex;
+
+    background: #f7f8fa; 
+
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+            justify-content: space-between;
+}
+.user-chances-timer > div
+{
+    padding: 20px;
+}
+.user-chances-timer > div:last-child
+{
+    text-align: right;
+}
+.user-chances-timer > div:last-child .user-chances-timer-item
+{
+    padding: 12px 15px;
+}
+.user-chances-timer span
+{
+    margin: 0 5px; 
+
+    color: #7e858a;
+}
+.user-chances-timer p
+{
+    margin-bottom: 7px;
+}
+
+.user-chances-timer-title
+{
+    font-family: 'proxima_nova_rgbold'; 
+    font-size: 18px;
+}
+
+.user-chances-timer-item
+{
+    font-size: 28px; 
+
+    display: inline-block;
+
+    margin: 0 2px;
+    padding: 12px 10px;
+
+    text-align: center;
+    vertical-align: baseline;
+
+    border-radius: 5px;
+    background: #fff;
+}
+.user-chances-timer-item:first-child
+{
+    margin-left: 0;
+}
+
+.user-chances-menu li
+{
+    line-height: 18px; 
+
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display:         flex;
+
+    margin: 5px 0;
+    padding: 20px;
+
+    transition: all .3s;
+
+    border: 1px solid #f2f3f3;
+    border-radius: 10px;
+
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+            align-items: center;
+}
+.user-chances-menu li:hover
+{
+    background: #f2f3f3;
+}
+.user-chances-menu li a
+{
+    border-bottom: none;
+}
+.user-chances-menu li.active
+{
+    background: #92a8d1;
+}
+.user-chances-menu li.active a
+{
+    color: #fff;
+}
+.user-chances-menu li.active i
+{
+    color: #fff;
+}
+.user-chances-menu li i
+{
+    margin-right: 10px; 
+
+    color: #92a8d1;
+}
+
+.user-chances-support-info
+{
+    margin-top: 25px;
+    padding: 25px 20px;
+
+    border: 1px solid #f2f3f3; 
+    border-radius: 10px;
+}
+.user-chances-support-info li
+{
+    line-height: 22px; 
+
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display:         flex;
+
+    margin: 10px 0;
+
+    transition: all .3s;
+
+    -webkit-align-items: center;
+    -ms-flex-align: center;
+            align-items: center;
+}
+.user-chances-support-info li i
+{
+    margin-right: 10px; 
+
+    color: #92a8d1;
+}
+
+.user-chances-history
+{
+    margin: 0 15px;
+    padding: 0;
+
+    border-radius: 5px;
+}
+.user-chances-history .user-chances-tour-date
+{
+    margin-top: 27px;
+}
+.user-chances-history .tab-content
+{
+    padding-top: 30px;
+
+    box-shadow: 0 0 5px #c5cace;
+}
+.user-chances-history .nav:before,
+.user-chances-history .nav:after
+{
+    display: block;
+
+    content: normal;
+}
+.user-chances-history .nav-tabs
+{
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display:         flex;
+
+    border: none; 
+
+    -webkit-justify-content: space-between;
+    -ms-flex-pack: justify;
+            justify-content: space-between;
+}
+.user-chances-history .nav-tabs li
+{
+    float: none;
+
+    width: 48%;
+    margin-bottom: 0;
+
+    text-align: center;
+
+    border-radius: 5px 5px 0 0;
+    background: #f7f8fa; 
+    box-shadow: 0 -2px 4px #c5cace;
+}
+.user-chances-history .nav-tabs li.active
+{
+    background: #fff;
+}
+.user-chances-history .nav-tabs li.active a
+{
+    color: #92a8d1; 
+    border: none;
+}
+.user-chances-history .nav-tabs li.active:hover a
+{
+    border: none;
+}
+.user-chances-history .nav-tabs li:hover
+{
+    margin-bottom: 0;
+}
+.user-chances-history .nav-tabs li:hover a
+{
+    border: none;
+}
+.user-chances-history .nav-tabs li a
+{
+    font-size: 18px;
+
+    padding: 30px 15px 20px; 
+
+    color: #7e858a;
+    border: none;
+}
+
+.user-chances-history-more
+{
+    font-size: 14px;
+
+    padding: 15px 0;
+
+    text-align: center;
+    text-transform: uppercase;
+
+    color: #92a8d1;
+    background: #f7f8fa;
+}
+.user-chances-history-more span
+{
+    font-family: 'proxima_nova_rgbold';
+}
+.user-chances-history-more i
+{
+    font-size: 24px;
+
+    margin-right: 5px; 
+
+    vertical-align: middle;
 }

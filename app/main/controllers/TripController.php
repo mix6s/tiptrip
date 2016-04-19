@@ -13,6 +13,17 @@ class TripController extends Controller
 
 	}
 
+	public function rollAction($id)
+	{
+		$this->setJsonResponse();
+		$trip = $this->getDI()->tripManager->getTrip($id);
+		if (empty($trip)) {
+			return null;
+		}
+		return $this->getDI()->tripManager->playTrip($trip)->toArray();
+
+	}
+
 	public function listAction()
 	{
 		$form = new TripFilterForm();
