@@ -36,7 +36,7 @@ $di = $this->getDI();
 			</div>
 			<div class="header-profile-menu">
 				<ul>
-					<li><i class="icon-paper"></i> <a href="">Мои туры</a></li>
+					<li><i class="icon-paper"></i> <a href="<?= $di->url->get(['for' => 'profile']) ?>">Мои туры</a></li>
 					<li><i class="icon-history"></i> <a href="">История операций</a></li>
 					<li><i class="icon-setting"></i> <a href="">Настройки</a></li>
 					<li><i class="icon-exit"></i> <a href="<?= $di->url->get(['for' => 'logout']) ?>">Выход</a></li>

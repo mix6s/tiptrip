@@ -17,42 +17,103 @@ class BaseSeed extends AbstractSeed
 		$this->table('direction')->insert(
 			[
 				[
+					'title' => 'Мальдивы',
+					'active' => 1,
+				],
+				[
+					'title' => 'Куба',
+					'active' => 1,
+				],
+				[
+					'title' => 'Индонезия',
+					'active' => 1,
+				],
+				[
+					'title' => 'ОАЭ',
+					'active' => 1,
+				],
+				[
 					'title' => 'Европа',
 					'active' => 1,
 				],
 				[
-					'title' => 'Египет',
+					'title' => 'Азия',
 					'active' => 1,
-				]
+				],
+				[
+					'title' => 'Америка',
+					'active' => 1,
+				],
 			]
 		)->save();
 
 		$this->table('trip')->insert(
 			[
 				[
-					'title' => 'Trip 1',
-					'hotel_title' => 'hotel trip 1',
-					'price' => 50000,
-					'direction_id' => 1,
-					'multiplicity' => 250,
+					'title' => 'Мальдивы, Мале',
+					'hotel_title' => 'Palm Beach Resort and Spa Maldives',
+					'price' => 274555,
+					'direction_id' => $this->fetchRow("SELECT id FROM direction WHERE title = 'Азия'")['id'],
+					'multiplicity' => 1000,
 					'created_at' => date('Y-m-d H:i'),
 					'updated_at' => date('Y-m-d H:i'),
-					'start_dt' => date('Y-m-d H:i'),
-					'end_dt' => date('Y-m-d H:i'),
+					'start_dt' => '2016-07-15',
+					'end_dt' => '2016-07-25',
 					'active' => 1,
+					'image' => '/demo/male.jpg',
 				],
 				[
-					'title' => 'Trip 2',
-					'hotel_title' => 'hotel trip 2',
-					'price' => 20000,
-					'direction_id' => 2,
-					'multiplicity' => 100,
+					'title' => 'Куба, Варадеро',
+					'hotel_title' => 'Iberostar Laguna Azul',
+					'price' => 191295,
+					'direction_id' => $this->fetchRow("SELECT id FROM direction WHERE title = 'Америка'")['id'],
+					'multiplicity' => 500,
 					'created_at' => date('Y-m-d H:i'),
 					'updated_at' => date('Y-m-d H:i'),
-					'start_dt' => date('Y-m-d H:i'),
-					'end_dt' => date('Y-m-d H:i'),
+					'start_dt' => '2016-04-16',
+					'end_dt' => '2016-04-21',
 					'active' => 1,
-				]
+					'image' => '/demo/cuba.jpg',
+				],
+				[
+					'title' => 'Индонезия, о. Бали ',
+					'hotel_title' => 'Grand Mirage Resort & Thalasso Bali',
+					'price' => 366527,
+					'direction_id' => $this->fetchRow("SELECT id FROM direction WHERE title = 'Азия'")['id'],
+					'multiplicity' => 1500,
+					'created_at' => date('Y-m-d H:i'),
+					'updated_at' => date('Y-m-d H:i'),
+					'start_dt' => '2016-04-11',
+					'end_dt' => '2016-04-22',
+					'active' => 1,
+					'image' => '/demo/bali.jpg',
+				],
+				[
+					'title' => 'ОАЭ, Дубай',
+					'hotel_title' => 'Movenpick Hotel Jumeirah Beach',
+					'price' => 198069,
+					'direction_id' => $this->fetchRow("SELECT id FROM direction WHERE title = 'Азия'")['id'],
+					'multiplicity' => 500,
+					'created_at' => date('Y-m-d H:i'),
+					'updated_at' => date('Y-m-d H:i'),
+					'start_dt' => '2016-05-16',
+					'end_dt' => '2016-05-23',
+					'active' => 1,
+					'image' => '/demo/dubai.jpg',
+				],
+				[
+					'title' => 'Франция, Париж',
+					'hotel_title' => 'Marriott Hotel Champs-Elysees',
+					'price' => 395185,
+					'direction_id' => $this->fetchRow("SELECT id FROM direction WHERE title = 'Европа'")['id'],
+					'multiplicity' => 1500,
+					'created_at' => date('Y-m-d H:i'),
+					'updated_at' => date('Y-m-d H:i'),
+					'start_dt' => '2016-06-03',
+					'end_dt' => '2016-06-13',
+					'active' => 1,
+					'image' => '/demo/paris.jpg',
+				],
 			]
 		)->save();
     }

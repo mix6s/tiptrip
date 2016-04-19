@@ -41,6 +41,9 @@ class SecurityManager extends Component
 			}
 			return null;
 		}
+		$user->account->save([
+			'amount' => 5000
+		]);
 		return $user;
 	}
 

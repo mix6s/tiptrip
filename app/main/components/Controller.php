@@ -7,6 +7,8 @@ use Phalcon\Mvc\Dispatcher;
 
 class Controller extends PhalconController
 {
+	private $_isJsonResponse = false;
+
 	public function beforeExecuteRoute(Dispatcher $dispatcher)
 	{
 		if (!$this->getDI()->securityManager->checkPermissions(
@@ -23,6 +25,29 @@ class Controller extends PhalconController
 			);
 			return false;
 		}
+	}
+
+	public function afterExecuteRoute(\Phalcon\Mvc\Dispatcher $dispatcher)
+	{
+		if ($this->_isJsonResponse) {
+			$data = $dispatcher->getReturnedValue();
+			if (is_array($data)) {
+				$data = json_encode($data);
+			}
+
+			$this->response->setContent($data);
+			return $this->response->send();
+		}
+	}
+
+	/**
+	 * @param $data
+	 */
+	public function setJsonResponse()
+	{
+		$this->view->disable();
+		$this->_isJsonResponse = true;
+		$this->response->setContentType('application/json', 'UTF-8');
 	}
 
 	public function initialize()

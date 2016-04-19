@@ -2,9 +2,12 @@
 /**
  * @var \Phalcon\Mvc\View $this
  * @var App\Main\Components\DI $di
- * @var App\Main\Models\Location $location
+ * @var \App\Main\Models\Trip $trip
+ * @var \App\Main\Models\Attempt $attempt
  */
 $di = $this->getDI();
+$di->popupManager->addPopupToOutput('attempt/result');
+$di->popupManager->addPopupToOutput('attempt/welcome', ['trip' => $trip]);
 ?>
 <!DOCTYPE html>
 <!--[if lt IE 7]>
@@ -21,7 +24,7 @@ $di = $this->getDI();
 	<title></title>
 	<meta name="description" content="">
 	<meta name="viewport" content="width=device-width">
-	<link rel="shortcut icon" href="icon/favicon.ico">
+	<link rel="shortcut icon" href="/icon/favicon.ico">
 	<link rel="stylesheet" href="/css/bootstrap.css">
 	<link rel="stylesheet" href="/css/style.css">
 	<link rel="stylesheet" href="/css/attempt.css">
@@ -43,8 +46,8 @@ $di = $this->getDI();
 		<div id="streetview"></div>
 	</div>
 	<header class="chance-header">
-		<a class="header-logo" href="/"><img src="images/logo.png" alt=""/></a>
-		<div class="header-chance-clock hidden-lg hidden-md"><i class="icon-setting"></i> <span class="js-countdown" data-seconds="120" data-format="%m2%m1:%s2%s1"></span></div>
+		<a class="header-logo" href="/"><img src="/images/logo.png" alt=""/></a>
+		<div class="header-chance-clock hidden-lg hidden-md"><i class="icon-setting"></i> <span class="js-countdown" data-active="<?= !empty($attempt) ? 1 : 0 ?>" data-seconds="<?= !empty($attempt) ? $attempt->secondsToExpire : 60 * 5 ?>" data-format="%m2%m1:%s2%s1"></span></div>
 		<div class="header-chance-time hidden-lg hidden-md js-toggle-menu">
 			<i class="icon-setting"></i>
 		</div>
@@ -52,10 +55,10 @@ $di = $this->getDI();
 			<div class="chance-time-items-wrapper">
 				<div class="chance-time-item">
 					<div>
-						<p class="chance-bold">Франция, Париж</p>
-						<p>Hôtel Imperial</p>
+						<p class="chance-bold"><?= $trip->direction->title ?>, <?= $trip->title ?></p>
+						<p><?= $trip->hotelTitle ?></p>
 					</div>
-					<div class="chance-bold">1 : 500</div>
+					<div class="chance-bold">1 : <?= $trip->multiplicity ?></div>
 				</div>
 				<div class="chance-time-item">
 					<div>
@@ -63,18 +66,18 @@ $di = $this->getDI();
 						<p>Количество попыток:</p>
 					</div>
 					<div>
-						<p class="highlight-green">500 <i class="icon-rub-bold"></i></p>
-						<p class="highlight-green">4 / 5</p>
+						<p class="highlight-green"><?= $di->tag->rub($trip->ticketPrice) ?></p>
+						<p class="highlight-green"><?= !empty($attempt) ? $attempt->count : 1?> / 5</p>
 					</div>
 				</div>
 			</div>
 			<div class="chance-time">
 				<div class="chance-time-title">Осталось времени на ход:</div>
-				<div class="chance-time-content js-countdown" data-seconds="120" data-format="<span>%m2</span><span>%m1</span> м. <span>%s2</span><span>%s1</span> с.">
+				<div class="chance-time-content js-countdown" data-active="<?= !empty($attempt) ? 1 : 0 ?>" data-seconds="<?= !empty($attempt) ? $attempt->secondsToExpire : 60 * 5 ?>" data-format="<span>%m2</span><span>%m1</span> м. <span>%s2</span><span>%s1</span> с.">
 				</div>
 			</div>
-			<a href="" class="btn btn-success">
-				Купить <i class="icon-question"></i> <span class="chance-bold">1 мин.</span> за <span class="chance-bold">30</span> <i class="icon-rub-bold"></i>
+			<a href="" class="btn btn-success js-buy-extra-time">
+				Купить <i class="icon-map-add-time"></i> <span class="chance-bold">1 мин.</span> за <span class="chance-bold">30</span> <i class="icon-rub-bold"></i>
 			</a>
 		</div>
 	</header>
@@ -82,7 +85,7 @@ $di = $this->getDI();
 		<div class="chance-compass">
 			<div class="needle"></div>
 		</div>
-		<div class="chance-start" href=""><i class="icon-question"></i></div>
+		<div class="chance-start" href=""><i class="icon-map-pointer"></i></div>
 		<div class="chance-pm">
 			<div class="chance-p" href="">+</div>
 			<div class="chance-m" href="">–</div>
@@ -96,8 +99,8 @@ $di = $this->getDI();
 				<div class="map-control js-minimap-zoom-out" href="">–</div>
 			</div>
 			<div class="chance-minmap-scale map-controls hidden-xs hidden-sm">
-				<div class="map-control" href=""><i class="icon-question"></i></div>
-				<div class="map-control" href=""><i class="icon-question"></i></div>
+				<div class="map-control" href=""><i class="icon-map-arrow-up"></i></div>
+				<div class="map-control" href=""><i class="icon-map-arrow-down"></i></div>
 			</div>
 			<a href="" class="btn btn-back hidden-lg hidden-md js-minimap-hide"><i class="icon-question"></i> Назад</a>
 		</div>
@@ -112,7 +115,73 @@ $di = $this->getDI();
 		miniMap,
 		sv,
 		marker,
-		defaultLocation = {lat: <?= $location->latitude ?>, lng: <?= $location->longitude ?>};
+		defaultLocation = {lat: <?= !empty($attempt) ? $attempt->getSourceLocation()['lat'] : 0 ?>, lng: <?= !empty($attempt) ? $attempt->getSourceLocation()['lng'] : 0 ?>},
+		isActive = <?= (int)!empty($attempt) ?>;
+
+	$(document).ready(function () {
+		initCountdown();
+		if (!isActive) {
+			var welcomePopup = new WelcomePopup({
+				tripId: <?= $trip->id?>,
+				onSuccess: function (response) {
+					if (response.status) {
+						defaultLocation = {lat: parseFloat(response.attempt.source_latitude), lng: parseFloat(response.attempt.source_longitude)};
+						isActive = true;
+						runCountdown();
+						initialize();
+						welcomePopup.close();
+					}
+				}
+			});
+			welcomePopup.show();
+		} else {
+			runCountdown();
+			initialize();
+		}
+	});
+
+	function initCountdown() {
+		$('.js-countdown').each(function () {
+			var $countdown = $(this);
+			var format = $countdown.data('format'),
+				seconds = $countdown.data('seconds');
+
+			var s = Math.floor((seconds) % 60),
+				m = Math.floor((seconds / 60) % 60),
+				html = format;
+			html = html.replace(/%m2/g, Math.floor(m / 10));
+			html = html.replace(/%m1/g, m - Math.floor(m / 10) * 10);
+			html = html.replace(/%s2/g, Math.floor(s / 10));
+			html = html.replace(/%s1/g, s - Math.floor(s / 10) * 10);
+			$countdown.html(html);
+		});
+	}
+
+	function runCountdown() {
+		$('.js-countdown').each(function () {
+			var $countdown = $(this);
+			var updateCountdown = function () {
+				var format = $countdown.data('format'),
+					seconds = $countdown.data('seconds');
+
+				var s = Math.floor((seconds) % 60),
+					m = Math.floor((seconds / 60) % 60),
+					html = format;
+				html = html.replace(/%m2/g, Math.floor(m / 10));
+				html = html.replace(/%m1/g, m - Math.floor(m / 10) * 10);
+				html = html.replace(/%s2/g, Math.floor(s / 10));
+				html = html.replace(/%s1/g, s - Math.floor(s / 10) * 10);
+				$countdown.html(html);
+				seconds--;
+				$countdown.data('seconds', seconds);
+				if (seconds > 0 && isActive) {
+					setTimeout(updateCountdown, 1000)
+				}
+			};
+			updateCountdown();
+		});
+	}
+
 	function processSVData(data, status) {
 		if (status === google.maps.StreetViewStatus.OK) {
 			panorama.setPano(data.location.pano);
@@ -195,113 +264,137 @@ $di = $this->getDI();
 	}
 
 	function bindEvents() {
-		$(document).ready(function () {
-			var compassMousedown = false;
-			google.maps.event.addListener(panorama, "pov_changed", function () {
-				povMoved(panorama.getPov().heading, panorama.getPov().pitch);
-			});
-
-			google.maps.event.addDomListener(miniMap, "click", function(t) {
-				var e;
-				e = !1, setTimeout(function() {
-					e === !1 && setMarkerPosition(t.latLng.lat(), t.latLng.lng())
-				}, 200), google.maps.event.addDomListener(miniMap, "dblclick", function(t) {
-					e = !0
-				})
-			})
-			$('.js-countdown').each(function () {
-				var $countdown = $(this);
-				var updateCountdown = function() {
-					var format = $countdown.data('format'),
-						seconds = $countdown.data('seconds');
-					seconds--;
-					$countdown.data('seconds', seconds);
-					var s = Math.floor((seconds) % 60),
-						m = Math.floor((seconds/60) % 60),
-						html = format;
-					html = html.replace(/%m2/g, Math.floor(m/10));
-					html = html.replace(/%m1/g, m - Math.floor(m/10)*10);
-					html = html.replace(/%s2/g, Math.floor(s/10));
-					html = html.replace(/%s1/g, s - Math.floor(s/10)*10);
-					$countdown.html(html);
-					if(seconds<=0){
-						clearInterval(timeinterval);
-					}
-				};
-				updateCountdown();
-				var timeinterval = setInterval(updateCountdown , 1000);
-
-			})
-			$('.chance')
-				.on('rezise', function () {
-					google.maps.event.trigger(miniMap, 'resize');
-				})
-				.on('click', '.js-minimap-make-guess', function () {
-					if (!marker) {
-						return;
-					}
-					var userLocation = marker.getPosition();
-					$('#popup_attempt_result').data('startLocation', defaultLocation).data('userLocation', {lat: userLocation.lat(), lng: userLocation.lng()}).modal();
-					return false;
-				})
-				.on('click', '.js-toggle-menu', function () {
-					$('.chance-time-wrapper').toggleClass('hidden-xs hidden-sm');
-					return false;
-				})
-				.on('click', '.js-minimap-show', function () {
-					$('.chance-minmap-wrapper').addClass('show');
-					$(this).addClass('hide');
-					$('.js-minimap-make-guess').removeClass('hidden-xs hidden-sm');
-					autofitMiniMap();
-					return false;
-				})
-				.on('click', '.js-minimap-hide', function () {
-					$('.chance-minmap-wrapper').removeClass('show');
-					$('.js-minimap-show').removeClass('hide');
-					$('.js-minimap-make-guess').addClass('hidden-xs hidden-sm');
-					autofitMiniMap();
-					return false;
-				})
-				.on('click', '.js-minimap-zoom-out', function () {
-					miniMap.setZoom(miniMap.getZoom() - 1);
-				})
-				.on('click', '.js-minimap-zoom-in', function () {
-					miniMap.setZoom(miniMap.getZoom() + 1);
-				})
-				.on('click', '.chance-p', function () {
-					panorama.setZoom(panorama.getZoom() + 1);
-				})
-				.on('click', '.chance-m', function () {
-					panorama.setZoom(panorama.getZoom() - 1);
-				})
-				.on('click', '.chance-start', function () {
-					panorama.setPosition(new google.maps.LatLng(defaultLocation.lat, defaultLocation.lng));
-				})
-				.on('mousedown', '.chance-compass', function () {
-					compassMousedown = true;
-				})
-				.on('mouseup', '.chance-compass', function () {
-					compassMousedown = false;
-				})
-				.on('mousemove', '.chance-compass', function (e) {
-					if (!compassMousedown) {
-						return;
-					}
-					var $compass = $(this),
-						width = $compass.width(),
-						position = {
-							x: e.pageX - $compass.offset().left - width / 2,
-							y: width / 2 - (e.pageY - $compass.offset().top)
-						},
-						heading = _getAngleFromPoint(position, width);
-					panorama.setPov({heading: heading, pitch: panorama.getPov().pitch});
-				})
-			;
+		var compassMousedown = false;
+		google.maps.event.addListener(panorama, "pov_changed", function () {
+			povMoved(panorama.getPov().heading, panorama.getPov().pitch);
 		});
+
+		google.maps.event.addDomListener(miniMap, "click", function(t) {
+			var e;
+			e = !1, setTimeout(function() {
+				e === !1 && setMarkerPosition(t.latLng.lat(), t.latLng.lng())
+			}, 200), google.maps.event.addDomListener(miniMap, "dblclick", function(t) {
+				e = !0
+			})
+		});
+		$('.chance')
+			.off()
+			.on('rezise', function () {
+				google.maps.event.trigger(miniMap, 'resize');
+			})
+			.on('click', '.js-minimap-make-guess', function () {
+				if (!marker) {
+					return;
+				}
+				var userLocation = marker.getPosition();
+				$.ajax({
+					url: '<?= $di->url->get(['for' => 'attemptMakeGuess', 'id' => $trip->id])?>',
+					type: 'post',
+					data: {location: {lat: userLocation.lat(), lng: userLocation.lng()}},
+					success: function (response) {
+						if (response.status) {
+							var $popup = $('#popup_attempt_result');
+							$popup
+								.data('startLocation', {lat: parseFloat(response.attempt.source_latitude), lng: parseFloat(response.attempt.source_longitude)})
+								.data('distance', response.attempt.distance)
+								.data('userLocation', {lat: parseFloat(response.attempt.user_latitude), lng: parseFloat(response.attempt.user_longitude)})
+								.modal();
+							$popup.find('.js-new-attempt').off().on('click', function () {
+								$.ajax({
+									url: '<?= $di->url->get(['for' => 'attemptNew', 'id' => $trip->id]) ?>',
+									success: function (response) {
+										if (response.status) {
+											defaultLocation = {lat: parseFloat(response.attempt.source_latitude), lng: parseFloat(response.attempt.source_longitude)};
+											isActive = true;
+											$('.js-countdown').each(function () {
+												$(this).data('seconds', response.attempt.seconds_to_expire);
+											});
+											runCountdown();
+											initialize();
+											marker = undefined;
+											$('.js-minimap-make-guess').addClass('disabled');
+											$popup.modal('hide');
+										}
+									}
+								})
+
+							});
+							isActive = false;
+						}
+					}
+				});
+				return false;
+			})
+			.on('click', '.js-buy-extra-time', function () {
+				$.ajax({
+					url: '<?= $di->url->get(['for' => 'attemptBuyExtraTime', 'id' => $trip->id])?>',
+					success: function (response) {
+						if (response.status) {
+							$('.js-countdown').each(function () {
+								$(this).data('seconds', response.attempt.seconds_to_expire);
+							});
+						}
+					}
+				});
+				return false;
+			})
+			.on('click', '.js-toggle-menu', function () {
+				$('.chance-time-wrapper').toggleClass('hidden-xs hidden-sm');
+				return false;
+			})
+			.on('click', '.js-minimap-show', function () {
+				$('.chance-minmap-wrapper').addClass('show');
+				$(this).addClass('hide');
+				$('.js-minimap-make-guess').removeClass('hidden-xs hidden-sm');
+				autofitMiniMap();
+				return false;
+			})
+			.on('click', '.js-minimap-hide', function () {
+				$('.chance-minmap-wrapper').removeClass('show');
+				$('.js-minimap-show').removeClass('hide');
+				$('.js-minimap-make-guess').addClass('hidden-xs hidden-sm');
+				autofitMiniMap();
+				return false;
+			})
+			.on('click', '.js-minimap-zoom-out', function () {
+				miniMap.setZoom(miniMap.getZoom() - 1);
+			})
+			.on('click', '.js-minimap-zoom-in', function () {
+				miniMap.setZoom(miniMap.getZoom() + 1);
+			})
+			.on('click', '.chance-p', function () {
+				panorama.setZoom(panorama.getZoom() + 1);
+			})
+			.on('click', '.chance-m', function () {
+				panorama.setZoom(panorama.getZoom() - 1);
+			})
+			.on('click', '.chance-start', function () {
+				panorama.setPosition(new google.maps.LatLng(defaultLocation.lat, defaultLocation.lng));
+			})
+			.on('mousedown', '.chance-compass', function () {
+				compassMousedown = true;
+			})
+			.on('mouseup', '.chance-compass', function () {
+				compassMousedown = false;
+			})
+			.on('mousemove', '.chance-compass', function (e) {
+				if (!compassMousedown) {
+					return;
+				}
+				var $compass = $(this),
+					width = $compass.width(),
+					position = {
+						x: e.pageX - $compass.offset().left - width / 2,
+						y: width / 2 - (e.pageY - $compass.offset().top)
+					},
+					heading = _getAngleFromPoint(position, width);
+				panorama.setPov({heading: heading, pitch: panorama.getPov().pitch});
+			})
+		;
 	}
 </script>
 <script async defer
-		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCp4EyP7eXjNecIG7AH2bn_TN4Sut9c3Ps&signed_in=true&callback=initialize&libraries=geometry">
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCp4EyP7eXjNecIG7AH2bn_TN4Sut9c3Ps&signed_in=true">
 </script>
 <?= $di->popupManager->output() ?>
 </body>

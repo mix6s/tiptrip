@@ -3,9 +3,12 @@
 namespace App\Main\Components;
 
 use App\Main\Forms\TripFilterForm;
+use App\Main\Models\Attempt;
 use App\Main\Models\Direction;
 use App\Main\Models\Location;
 use App\Main\Models\Trip;
+use App\Main\Models\User;
+use Phalcon\Db\RawValue;
 use Phalcon\Mvc\User\Component;
 use Phalcon\Validation\Message;
 
@@ -26,6 +29,111 @@ class TripManager extends Component
 
 	/** @var Direction[]|null */
 	private $_directions = null;
+
+	public function makeGuess(User $user, Trip $trip, array $location)
+	{
+		if (empty($location['lat'])) {
+			return null;
+		}
+		if (empty($location['lng'])) {
+			return null;
+		}
+		$attempt = $this->getUserActiveAttempt($user->id, $trip->id);
+		if (empty($attempt)) {
+			return null;
+		}
+		$attempt->setUserLocation($location['lat'], $location['lng']);
+		$attempt->save([
+			'status' => 1,
+		]);
+		$attempt->refresh();
+		return $attempt;
+	}
+
+	/**
+	 * @param $userId
+	 * @param $tripId
+	 * @return Attempt
+	 */
+	public function getUserActiveAttempt($userId, $tripId)
+	{
+		$attempt = Attempt::query()
+			->where(
+				"user_id = :user_id: AND trip_id = :trip_id: AND expired_at > NOW() AND status = :status:",
+				["user_id" => $userId, 'trip_id' => $tripId, 'status' => Attempt::STATUS_ACTIVE]
+			)
+			->execute()
+			->getFirst();
+		return $attempt;
+	}
+
+	/**
+	 * @param User $user
+	 * @param Trip $trip
+	 * @return Attempt
+	 */
+	public function createNewAttempt(User $user, Trip $trip)
+	{
+		$location = $this->getDI()->tripManager->getLocationForNewAttempt();
+		$attempt = new Attempt();
+		$attempt->create([
+			'user_id' => $user->id,
+			'trip_id' => $trip->id,
+			'source_latitude' => $location->latitude,
+			'source_longitude' => $location->longitude,
+			'expired_at' => new RawValue("now() + INTERVAL '5 minutes'")
+		]);
+		$attempt->refresh();
+		//@todo move this logic to AccountManager
+		$user->account->save([
+			'amount' => $user->account->amount - $trip->ticketPrice
+		]);
+		return $attempt;
+	}
+
+	/**
+	 * @param User $user
+	 * @param Trip $trip
+	 * @return null|Attempt
+	 */
+	public function buyExtraTimeForAttempt(User $user, Trip $trip)
+	{
+		$attempt = $this->getUserActiveAttempt($user->id, $trip->id);
+		if (empty($attempt)) {
+			return null;
+		}
+		//@todo move this logic to AccountManager
+		$user->account->save([
+			'amount' => $user->account->amount - 30
+		]);
+		$attempt->save([
+			'expired_at' => new RawValue("expired_at + INTERVAL '1 minutes'")
+		]);
+		$attempt->refresh();
+		return $attempt;
+	}
+
+
+	/**
+	 * @param $tripId
+	 * @return mixed
+	 */
+	public function getTripAttemptCount($tripId)
+	{
+		return Attempt::count("trip_id = {$tripId}");
+	}
+
+	/**
+	 * @param $id
+	 * @return Trip
+	 */
+	public function getTrip($id)
+	{
+		return Trip::query()
+			->where("active = :status: AND id = :id:", ["status" => "1", 'id' => $id])
+			->execute()
+			->getFirst();
+	}
 
 	/**
 	 * @param TripFilterForm $filter

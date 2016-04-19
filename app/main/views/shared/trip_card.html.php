@@ -5,6 +5,7 @@
  * @var App\Main\Components\DI $di
  */
 use App\Main\Components\TripManager;
+use Phalcon\Escaper;
 
 $di = $this->getDI();
 if (!isset($style)) {
@@ -13,7 +14,7 @@ if (!isset($style)) {
 ?>
 <div class="tour-item-wrapper <?= 'full' == $style ? 'col-lg-10 col-md-10 col-sm-12 col-xs-12' : 'col-lg-5 col-md-5 col-sm-6 col-xs-12'; ?>">
 	<div class="tour-item col-bg">
-		<div class="tour-item-preview" style="background: url('images/delete/tour_preview_big.jpg') 50% 50% no-repeat;">
+		<div class="tour-item-preview" style="background: url('<?= $trip->image ?>') 50% 50% no-repeat; background-size: cover;">
 			<div class="tour-item-header">
 				<div class="tour-sum-wrapper">
 					<div class="tour-sum-label">Стоимость тура:</div>
@@ -41,9 +42,9 @@ if (!isset($style)) {
 				</div>
 				<?php if ('full' == $style) : ?>
 					<?php if ($trip->status == TripManager::STATUS_ACTIVE) : ?>
-						<button type="button" class="btn btn-sm btn-success hidden-sm hidden-xs">
+						<a href="<?= $di->url->get(['for' => 'attempt', 'id' => $trip->id])?>" class="btn btn-sm btn-success hidden-sm hidden-xs">
 							<i class="icon-cart"></i> Купить шанс за <span><?= $di->tag->rub($trip->ticketPrice) ?></span>
-						</button>
+						</a>
 					<?php endif; ?>
 					<?php if (in_array($trip->status, [TripManager::STATUS_SOON, TripManager::STATUS_WINNER_SEARCH])) : ?>
 						<a class="btn btn-sm btn-default hidden-sm hidden-xs" href="<?= $di->url->get(['for' => 'trip', 'id' => $trip->id])?>">Подробнее</a>
@@ -107,8 +108,31 @@ if (!isset($style)) {
 			</div>
 			<?php if ($trip->status == TripManager::STATUS_ACTIVE) : ?>
 				<div class="tour-description-content-right tour-description-progressbar">
-					<div>Прогрессбар синий</div>
-					<div>Прогрессбар зеленый</div>
+					<div class="row">
+						<div class="col-md-6">
+							<div class="card-chart">
+								<div class="card-donut card-goalchart-blue" data-size="60" data-thickness="10"  data-value="<?= $trip->getTimeRatio() ?>"></div>
+								<div class="card-center">
+									<span class="card-value card-blue"><?= floor($trip->getTimeRatio() * 100) ?>%</span>
+								</div>
+							</div>
+							<div class="card-description">
+								время до<br> окончания<br> торгов
+							</div>
+						</div>
+						<div class="col-md-6">
+							<div class="card-chart">
+								<div class="card-donut card-goalchart-green" data-size="60" data-thickness="10" data-value="<?= $trip->getAttemptRatio() ?>"></div>
+								<div class="card-center">
+									<span class="card-value card-green"><?= floor($trip->getAttemptRatio() * 100) ?>%</span>
+								</div>
+							</div>
+							<div class="card-description">
+								количество<br> проданых<br> шансов
+							</div>
+						</div>
+					</div>
+
 				</div>
 			<?php endif; ?>
 			<?php if ($trip->status == TripManager::STATUS_SOON) : ?>
@@ -181,9 +205,9 @@ if (!isset($style)) {
 			<?php endif; ?>
 		</div>
 		<?php if ($trip->status == TripManager::STATUS_ACTIVE) : ?>
-			<button type="button" class="btn btn-sm btn-success <?= 'full' == $style ? 'hidden-md hidden-lg' : ''?>">
+			<a href="<?= $di->url->get(['for' => 'attempt', 'id' => $trip->id])?>" class="btn btn-sm btn-success <?= 'full' == $style ? 'hidden-md hidden-lg' : ''?>">
 				<i class="icon-cart"></i> Купить шанс за <span><?= $di->tag->rub($trip->ticketPrice) ?></span>
-			</button>
+			</a>
 		<?php endif; ?>
 		<?php if (in_array($trip->status, [TripManager::STATUS_SOON, TripManager::STATUS_WINNER_SEARCH])) : ?>
 			<a class="btn btn-sm btn-default <?= 'full' == $style ? 'hidden-md hidden-lg' : ''?>" href="<?= $di->url->get(['for' => 'trip', 'id' => $trip->id])?>">Подробнее</a>

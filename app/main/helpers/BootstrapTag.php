@@ -41,11 +41,11 @@ class BootstrapTag extends Tag
 		);
 	}
 
-	static public function popup($name)
+	static public function popup($name, $params = [])
 	{
 		/** @var DI $di */
 		$di = self::getDI();
-		return $di->view->partial('shared/popup/' . $name);
+		return $di->view->partial('shared/popup/' . $name, $params);
 	}
 
 	static public function popupLink($text, $popupName, array $attributes = [])

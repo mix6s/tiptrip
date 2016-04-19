@@ -9,10 +9,10 @@ $di = $this->getDI();
 	<div class="modal-dialog modal-lg ">
 		<div class="modal-content">
 			<div class="modal-header">
-				<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+				<a href="<?= $di->url->get(['for' => 'trips']) ?>" class="close"><span aria-hidden="true">&times;</span></a>
 				<h4 class="modal-title">Молодец, хочешь еще?</h4>
 			</div>
-			<div id="resultMap" style="width:100%; min-height: 300px">
+			<div id="resultMap" style="width:100%; min-height: 100px">
 
 			</div>
 			<div class="modal-body text-center">
@@ -23,7 +23,8 @@ $di = $this->getDI();
 				</div>
 				<div class="row">
 					<div class="col-md-12">
-						<button type="submit" class="btn btn-default">Хочу еще!</button>
+						<button type="submit" class="btn btn-success js-new-attempt">Хочу еще!</button>
+						<a href="<?= $di->url->get(['for' => 'trips']) ?>" class="btn btn-default">Все туры</a>
 					</div>
 				</div>
 			</div>
@@ -39,9 +40,14 @@ $di = $this->getDI();
 				$resultMap.html('');
 			})
 			.on('shown.bs.modal', function (e) {
-				$resultMap.height($resultMap.width()/1.5);
+				var height = $resultMap.width()/1.5;
+				if (height > $(window).height() - 200) {
+					height = $(window).height() - 200;
+				}
+				$resultMap.height(height);
 				var startLocation = $popup.data('startLocation'),
 					userLocation = $popup.data('userLocation'),
+					distance = $popup.data('distance'),
 					resultMap = new google.maps.Map(document.getElementById('resultMap'), {
 						disableDefaultUI: 1,
 						noClear: 1,
@@ -65,11 +71,11 @@ $di = $this->getDI();
 				resultMap.panToBounds(bounds);
 				var startLocationMarker = new google.maps.Marker({
 						position: {lat: startLocation.lat, lng: startLocation.lng},
-						map: resultMap,
+						map: resultMap
 					}),
 					userLocationMarker = new google.maps.Marker({
 						position: {lat: userLocation.lat, lng: userLocation.lng},
-						map: resultMap,
+						map: resultMap
 					}),
 					flightPath = new google.maps.Polyline({
 						path: [startLocation, userLocation],
@@ -77,11 +83,7 @@ $di = $this->getDI();
 						strokeColor: '#FF0000',
 						strokeOpacity: 1.0,
 						strokeWeight: 2
-					}),
-					distance = (google.maps.geometry.spherical.computeDistanceBetween(
-						new google.maps.LatLng(startLocation.lat, startLocation.lng),
-						new google.maps.LatLng(userLocation.lat, userLocation.lng)
-					) / 1000).toFixed(0);
+					});
 				$popup.find('.distance').text(distance);
 			})
 		;

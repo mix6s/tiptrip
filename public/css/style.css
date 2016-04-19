@@ -467,6 +467,81 @@ th
     -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-menu-login:before
+{
+    content: '\e926';
+}
+
+.icon-menu-close:before
+{
+    content: '\e918';
+}
+
+.icon-map-time:before
+{
+    content: '\e919';
+}
+
+.icon-map-pointer:before
+{
+    content: '\e91a';
+}
+
+.icon-map-counter:before
+{
+    content: '\e91b';
+}
+
+.icon-map-close:before
+{
+    content: '\e91c';
+}
+
+.icon-map-back:before
+{
+    content: '\e91d';
+}
+
+.icon-map-arrow-up:before
+{
+    content: '\e91e';
+}
+
+.icon-map-arrow-down:before
+{
+    content: '\e91f';
+}
+
+.icon-map-add-time:before
+{
+    content: '\e920';
+}
+
+.icon-search-circle:before
+{
+    content: '\e921';
+}
+
+.icon-search:before
+{
+    content: '\e922';
+}
+
+.icon-complete:before
+{
+    content: '\e923';
+}
+
+.icon-arrow-up:before
+{
+    content: '\e924';
+}
+
+.icon-arrow-down:before
+{
+    content: '\e925';
+}
+
 .icon-history:before
 {
     content: '\e907';
@@ -2522,8 +2597,8 @@ button.swiper-pagination-bullet
 .tours-wrapper .tour-item > .btn
 {
     width: 100%;
-    height: 60px; 
-
+    height: 60px;
+    line-height: 43px;
     border-radius: 0 0 10px 10px;
 }
 
@@ -3009,6 +3084,8 @@ button.swiper-pagination-bullet
 }
 .chance .header-chance-time i
 {
+    font-size: 40px; 
+
     color: #fff;
 }
 
@@ -3032,6 +3109,12 @@ button.swiper-pagination-bullet
     padding: 20px 12px; 
 
     border-radius: 0;
+}
+.chance .chance-time-wrapper .btn i
+{
+    display: inline-block;
+
+    vertical-align: bottom;
 }
 .chance .chance-time-wrapper .btn-success
 {
@@ -3187,31 +3270,8 @@ button.swiper-pagination-bullet
     -ms-flex-align: center;
             align-items: center;
 }
-
-.chance .chance-compass .needle
-{
-    position: relative;
-
-    display: -webkit-flex;
-    display: -ms-flexbox;
-    display:         flex;
-    flex-direction: column;
-
-
-    cursor: pointer;
-
-    -webkit-flex-direction: column;
-    -ms-flex-direction: column;
-    -webkit-justify-content: center;
-    -ms-flex-pack: center;
-    justify-content: center;
-    -webkit-align-items: center;
-    -ms-flex-align: center;
-    align-items: center;
-}
-
-.chance .chance-compass .needle:before,
-.chance .chance-compass .needle:after
+.chance .chance-compass:before,
+.chance .chance-compass:after
 {
     width: 0;
     height: 0;
@@ -3221,11 +3281,11 @@ button.swiper-pagination-bullet
     border-right: 6px solid transparent;
     border-left: 6px solid transparent;
 }
-.chance .chance-compass .needle:after
+.chance .chance-compass:after
 {
     border-top: 20px solid #fff;
 }
-.chance .chance-compass .needle:before
+.chance .chance-compass:before
 {
     border-bottom: 20px solid red;
 }
@@ -3427,7 +3487,22 @@ button.swiper-pagination-bullet
     position: absolute;
     bottom: 20px;
     left: 10px;
-    text-shadow: none;
+
+    display: -webkit-flex;
+    display: -ms-flexbox;
+    display:         flex;
+
+    -webkit-align-items: flex-start;
+    -ms-flex-align: start;
+            align-items: flex-start;
+}
+.chance .btn-back i
+{
+    font-size: 40px;
+    line-height: 18px;
+
+    margin-top: 2px;
+    margin-left: -10px;
 }
 
 .chance .header-chance-clock

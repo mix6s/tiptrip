@@ -176,7 +176,10 @@ $di->set(
 		$router->add("/forgot", "User::passwordRestore");
 		$router->add("/trip", "Trip::list")->setName('trips');
 		$router->add("/trip/{id:[0-9]+}", "Trip::index")->setName('trip');
-		$router->add("/attempt", "Attempt::index");
+		$router->add("/trip/{id:[0-9]+}/attempt", "Attempt::index")->setName('attempt');
+		$router->add("/trip/{id:[0-9]+}/attempt/new", "Attempt::new")->setName('attemptNew');
+		$router->add("/trip/{id:[0-9]+}/attempt/buy_extra_time", "Attempt::buyExtraTime")->setName('attemptBuyExtraTime');
+		$router->add("/trip/{id:[0-9]+}/attempt/make_guess", "Attempt::makeGuess")->setName('attemptMakeGuess');
 		return $router;
 	}
 );

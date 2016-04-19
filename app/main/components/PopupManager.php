@@ -15,10 +15,10 @@ class PopupManager extends Component
 	/**
 	 * @param $name
 	 */
-	public function addPopupToOutput($name)
+	public function addPopupToOutput($name, $params = [])
 	{
 		if (!in_array($name, $this->_popups)) {
-			$this->_popups[] = $name;
+			$this->_popups[] = ['name' => $name, 'params' => $params];
 		}
 	}
 
@@ -29,7 +29,7 @@ class PopupManager extends Component
 	{
 		$html = '';
 		foreach ($this->_popups as $popup) {
-			$html .= $this->getDI()->tag->popup($popup) . PHP_EOL;
+			$html .= $this->getDI()->tag->popup($popup['name'], $popup['params']) . PHP_EOL;
 		}
 		return $html;
 	}

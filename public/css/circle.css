@@ -1,0 +1,37 @@
+.card-chart {
+    width: 60px;
+    position: absolute;
+    clear: both;
+}
+
+.card-center {
+    text-align: center;
+    line-height: 1.5;
+    position: absolute;
+    top: 16px;
+    width: 100%;
+}
+
+.card-chart .card-value {
+    font-family: 'proxima_nova_rgbold';
+    font-size: 16px;
+}
+
+.card-chart .card-value.card-blue {
+    color: #92a8d1;
+}
+
+.card-chart .card-value.card-green {
+    color: #6cb800;
+}
+
+.card-description {
+    font-family: 'proxima_nova_rgbold';
+    font-size: 12px;
+    color: #7e858a;
+    text-transform: uppercase;
+    line-height: 14px;
+    margin-left: 80px;
+    margin-top: 5px;
+    min-height: 60px;
+}

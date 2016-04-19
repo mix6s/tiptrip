@@ -18,13 +18,15 @@ use Phalcon\Mvc\Model\Validator;
  * @property-read int $multiplicity
  * @property-read int $title
  * @property-read int $hotelTitle
- * @property-read strung $status
+ * @property-read string $status
+ * @property-read string $image
  * @property-read User|null $winner
  */
 class Trip extends Model
 {
 	/** @var User|null  */
 	private $_winner = null;
+	private $_attemptCount = null;
 
 	public function beforeCreate()
 	{
@@ -152,5 +154,40 @@ class Trip extends Model
 			$this->_winner = User::findFirst($winnerId);
 		}
 		return $this->_winner;
+	}
+
+	/**
+	 * @return string
+	 */
+	public function getImage()
+	{
+		return $this->readAttribute('image');
+	}
+
+	/**
+	 * @return int
+	 */
+	public function getAttemptCount()
+	{
+		if (null === $this->_attemptCount){
+			$this->_attemptCount = $this->getDI()->tripManager->getTripAttemptCount($this->id);
+		}
+		return $this->_attemptCount;
+	}
+
+	/**
+	 * @return float
+	 */
+	public function getTimeRatio()
+	{
+		return (time() - $this->startDt->getTimestamp()) / ($this->endDt->getTimestamp() - $this->startDt->getTimestamp());
+	}
+
+	/**
+	 * @return float
+	 */
+	public function getAttemptRatio()
+	{
+		return $this->getAttemptCount() / $this->multiplicity;
 	}
 }

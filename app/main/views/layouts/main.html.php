@@ -19,6 +19,7 @@ $di = $this->getDI();
 	<link rel="shortcut icon" href="icon/favicon.ico">
 	<link rel="stylesheet" href="/css/bootstrap.css">
 	<link rel="stylesheet" href="/css/style.css">
+	<link rel="stylesheet" href="/css/circle.css">
 </head>
 <body>
 
@@ -45,6 +46,7 @@ $di = $this->getDI();
 <script type="text/javascript" src="/js/jquery-2.2.2.js"></script>
 <script type="text/javascript" src="/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="/js/swiper.min.js"></script>
+<script type="text/javascript" src="/js/circle-progress.js"></script>
 <script type="text/javascript" src="/js/main.js"></script>
 <?= $di->popupManager->output() ?>
 </body>
