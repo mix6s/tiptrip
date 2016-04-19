@@ -156,7 +156,8 @@ $di = $this->getDI();
 <section class="tours-wrapper tours-preview section container">
 	<div class="section-title">Активные туры:</div>
 	<div class="row">
-		<?php foreach ($trips AS $trip): ?>
+		<?= $this->getContent(); ?>
+		<?php foreach ($trips as $trip): ?>
 			<?= $this->partial("shared/trip_card", ['trip' => $trip, 'style' => 'min']); ?>
 		<?php endforeach; ?>
 	</div>
@@ -176,10 +177,10 @@ $di = $this->getDI();
 	</div>
 </section>
 <section class="partners-wrapper section container">
-	<img src="images/partners/biblio_globus.jpg" alt="">
-	<img src="images/partners/pegas.jpg" alt="">
-	<img src="images/partners/panteon.jpg" alt="">
-	<img src="images/partners/itm.jpg" alt="">
-	<img src="images/partners/teztour.jpg" alt="">
-	<img src="images/partners/elite_travel.jpg" alt="">
+	<img src="/images/partners/biblio_globus.jpg" alt="">
+	<img src="/images/partners/pegas.jpg" alt="">
+	<img src="/images/partners/panteon.jpg" alt="">
+	<img src="/images/partners/itm.jpg" alt="">
+	<img src="/images/partners/teztour.jpg" alt="">
+	<img src="/images/partners/elite_travel.jpg" alt="">
 </section>

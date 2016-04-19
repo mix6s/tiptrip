@@ -17,7 +17,7 @@ return [
 		'port' => 11211
 	],
 	'application.main' => [
-		'viewsDir' => "../app/Main/Views"
+		'viewsDir' => "../app/main/views"
 	],
 	'logger' => [
 		'path'     => APP_PATH . '../runtime/',

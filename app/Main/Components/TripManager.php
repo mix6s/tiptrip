@@ -33,7 +33,6 @@ class TripManager extends Component
 	 */
 	public function getTripsByFilterForm(TripFilterForm $filter)
 	{
-		$page = (int)$filter->getValue('page');
 		return $this->getTrips([
 			'status' => $filter->getValue('status'),
 			'direction' => $filter->getValue('direction'),
@@ -51,7 +50,7 @@ class TripManager extends Component
 		if (empty($location)) {
 
 		}
-		//$location->delete();
+		$location->delete();
 		return $location;
 	}
 
@@ -61,6 +60,7 @@ class TripManager extends Component
 	 */
 	private function getTrips(array $filter)
 	{
+
 		$query = Trip::query()->where("active = :status:", ["status" => "1"]);
 		if (!empty($filter['direction'])) {
 			$query->andWhere("direction_id = :direction:", ["direction" => $filter['direction']]);

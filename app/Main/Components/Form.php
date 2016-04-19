@@ -30,7 +30,7 @@ class Form extends PhalconForm
 	 * @param null $whitelist
 	 * @return PhalconForm
 	 */
-	public function bind($data, $entity = null, $whitelist = null)
+	public function assign($data, $entity = null, $whitelist = null)
 	{
 		if (null === $this->_entity && null === $entity) {
 			$entityAttributes = [];

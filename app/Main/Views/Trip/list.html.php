@@ -8,7 +8,7 @@ use App\Main\Models\Trip;
  * @var DI $this
  */
 ?>
-	<div class="row">
+	<div class="row" style="display:none">
 		<div class="col-md-6 col-md-offset-3">
 			<form class="form-horizontal" method="get">
 				<div class="form-group">

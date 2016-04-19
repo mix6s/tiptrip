@@ -31,6 +31,8 @@ class StreetViewTask extends Task
 			echo sprintf('lat: %s', $location['latitude']) . PHP_EOL;
 			echo sprintf('long: %s', $location['longitude']) . PHP_EOL;
 		}
+		sleep(60);
+		$this->exploreAction($params);
 	}
 
 	private function getRandomStreetViewLocation($attemptNum = 0)
@@ -48,7 +50,7 @@ class StreetViewTask extends Task
 			mt_rand(-180 * $mul, 180 * $mul) / $mul,
 		];
 		$searchRadius = 50000;
-		$url = "https://cbks0.google.com/cbk?cb_client=apiv3&authuser=0&hl=en&output=polygon&it=1%3A1&rank=closest&ll={$location[0]},{$location[1]}&radius={$searchRadius}";
+		$url = "http://cbks0.google.com/cbk?cb_client=apiv3&authuser=0&hl=en&output=polygon&it=1%3A1&rank=closest&ll={$location[0]},{$location[1]}&radius={$searchRadius}";
 		$client = new Client(
 			[
 				'headers' => [

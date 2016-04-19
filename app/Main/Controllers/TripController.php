@@ -16,7 +16,7 @@ class TripController extends Controller
 	public function listAction()
 	{
 		$form = new TripFilterForm();
-		$form->bind($this->request->get());
+		$form->assign($this->request->get());
 		$trips = $this->getDI()->tripManager->getTripsByFilterForm($form);
 		$this->view->setVars(
 			[

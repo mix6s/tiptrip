@@ -12,7 +12,7 @@ class IndexController extends Controller
 	public function indexAction()
 	{
 		$form = new TripFilterForm();
-		$form->bind(['status' => TripManager::STATUS_ACTIVE]);
+		$form->assign(['status' => TripManager::STATUS_ACTIVE]);
 		$trips = $this->getDI()->tripManager->getTripsByFilterForm($form);
 		$this->view->setVars(
 			[
